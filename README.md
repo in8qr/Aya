@@ -60,28 +60,11 @@ Open http://localhost:3000.
 - Team: `team@ayaphotography.com` / `Team123!`
 - Customer: `customer@example.com` / `Customer123!`
 
-## Deployment
+## Production
 
-For detailed Linux deployment instructions, see:
-- **[EXISTING_SERVER_DEPLOYMENT.md](./EXISTING_SERVER_DEPLOYMENT.md)** - **Use this if the server already has other apps and data** (no disk formatting, add alongside Docker/Nginx/Cloudflare)
-- **[COMPLETE_SERVER_SETUP.md](./COMPLETE_SERVER_SETUP.md)** - Complete guide for **fresh** servers (disk mounting, networking, Cloudflare)
-- **[QUICK_DEPLOY.md](./QUICK_DEPLOY.md)** - Quick 5-step deployment guide
-- **[DEPLOYMENT.md](./DEPLOYMENT.md)** - Comprehensive deployment guide with troubleshooting
-
-**Quick summary:**
-- Use Node 20+, PostgreSQL (same server or managed), and MinIO or S3
-- Set `NEXTAUTH_URL` to your domain or `http://YOUR_IP:3000`
-- Run `npm run build` and `npm start`, or use PM2/systemd
-- Put the app behind Nginx (or similar) for HTTPS when you have a domain
-
-**Deployment files included:**
-- `ecosystem.config.js` - PM2 configuration
-- `docker-compose.prod.yml` - Production MinIO setup (with mounted disk support)
-- `scripts/setup-complete-server.sh` - Complete automated server setup (disk, network, software)
-- `scripts/deploy.sh` - Automated deployment script
-- `scripts/setup-server.sh` - Basic server setup automation
-- `scripts/backup-ayaeye.sh` - Comprehensive backup script
-- `nginx.conf.example` - Nginx configuration template
+- **Build:** `npm run build`
+- **Run:** `npm start` or use `pm2 start ecosystem.config.js`
+- Set `NEXTAUTH_URL` and `NEXT_PUBLIC_APP_URL` to your public URL. Put the app behind Nginx or Cloudflare Tunnel for HTTPS.
 
 ## Business rules
 
@@ -92,6 +75,6 @@ For detailed Linux deployment instructions, see:
 - Assignment email to team member; confirmation/rejection email to customer.
 - Receipts are admin-only, stored in private bucket, optional and multiple per booking (each with a name + file).
 
-## Logs (for debugging)
+## Logs
 
-When something goes wrong, the app writes errors to **`logs/app.log`** in the project folder. You can open that file to see what failed, or share it with someone helping you debug. The file is created automatically the first time an error is logged. Make sure Docker (PostgreSQL) is running and you have run `npx prisma db push` and `npm run db:seed` before signing in or loading Packages/Portfolio.
+Errors are written to **`logs/app.log`** in the project folder. Ensure PostgreSQL is running and you have run `npx prisma db push` and `npm run db:seed` before signing in or loading Packages/Portfolio.
