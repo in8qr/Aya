@@ -44,7 +44,7 @@ export default function AdminBookingsPage() {
               <CardHeader className="py-3">
                 <div className="flex justify-between items-start">
                   <CardTitle className="text-base">{b.package.name} · {b.customer.name}</CardTitle>
-                  <span className="text-sm text-muted-foreground">{tBookings(`status.${b.status}` as any) ?? b.status}</span>
+                  <span className="text-sm text-muted-foreground">{tBookings(`status.${b.status}` as `status.${string}`) ?? b.status}</span>
                 </div>
               </CardHeader>
               <CardContent className="py-0 pb-3 text-sm text-muted-foreground">
@@ -60,7 +60,7 @@ export default function AdminBookingsPage() {
           <DialogHeader>
             <DialogTitle>{t("bookings")}</DialogTitle>
           </DialogHeader>
-          {selectedId && <BookingDetailsModal bookingId={selectedId} onClose={() => setSelectedId(null)} />}
+          {selectedId && <BookingDetailsModal bookingId={selectedId} />}
         </DialogContent>
       </Dialog>
     </div>

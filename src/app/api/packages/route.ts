@@ -15,7 +15,7 @@ const createBody = z.object({
   sortOrder: z.number().int().optional(),
 });
 
-export async function GET(_request: NextRequest) {
+export async function GET() {
   try {
     const session = await getServerSession(authOptions);
     const visibleOnly = !session?.user || session.user.role === "CUSTOMER";
@@ -35,23 +35,31 @@ export async function GET(_request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  const session = await getServerSession(authOptions);
-  if (!session?.user?.id || session.user.role !== "ADMIN") {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.id || session.user.role !== "ADMIN") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
-  const body = await request.json();
-  const parsed = createBody.safeParse(body);
-  if (!parsed.success) {
-    return NextResponse.json(parsed.error.flatten(), { status: 400 });
-  }
+    const body = await request.json().catch(() => ({}));
+    const parsed = createBody.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json(parsed.error.flatten(), { status: 400 });
+    }
 
-  const pkg = await prisma.package.create({
-    data: {
-      ...parsed.data,
-      visible: parsed.data.visible ?? true,
-      sortOrder: parsed.data.sortOrder ?? 0,
-    },
-  });
-  return NextResponse.json(pkg);
+    const pkg = await prisma.package.create({
+      data: {
+        ...parsed.data,
+        visible: parsed.data.visible ?? true,
+        sortOrder: parsed.data.sortOrder ?? 0,
+      },
+    });
+    return NextResponse.json(pkg);
+  } catch (e) {
+    logError("POST /api/packages failed", e);
+    return NextResponse.json(
+      { error: "Could not create package. Database may be unavailable." },
+      { status: 503 }
+    );
+  }
 }

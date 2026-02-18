@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useCallback, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Link } from "@/i18n/navigation";
 import { PublicHeader } from "@/components/layout/public-header";
@@ -54,7 +54,7 @@ function BookingContent() {
   const selectedPackage = packages.find((p) => p.id === selectedPackageId);
   const durationMinutes = selectedPackage?.durationMinutes ?? 60;
 
-  async function checkCapacityForDateTime() {
+  const checkCapacityForDateTime = useCallback(async () => {
     if (!date || !time || !selectedPackage) return;
     const startAt = new Date(`${date}T${time}`);
     const res = await fetch("/api/bookings/capacity", {
@@ -65,7 +65,7 @@ function BookingContent() {
     const data = await res.json();
     setCapacityError(data.allowed ? null : data.reason ?? null);
     setDayWarning(data.dayWarning ?? null);
-  }
+  }, [date, time, selectedPackage, durationMinutes]);
 
   useEffect(() => {
     if (date && time) checkCapacityForDateTime();
@@ -73,7 +73,7 @@ function BookingContent() {
       setCapacityError(null);
       setDayWarning(null);
     }
-  }, [date, time, selectedPackageId, durationMinutes]);
+  }, [date, time, checkCapacityForDateTime]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();

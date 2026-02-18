@@ -40,7 +40,7 @@ export default function TeamBookingsPage() {
               <CardHeader>
                 <CardTitle className="text-lg">{b.package.name}</CardTitle>
                 <p className="text-sm text-muted-foreground">
-                  {new Date(b.startAt).toLocaleString(undefined, { dateStyle: "full", timeStyle: "short" })} · {b.durationMinutes} {tCommon("min")} · {tBookings(`status.${b.status}` as any) ?? b.status}
+                  {new Date(b.startAt).toLocaleString(undefined, { dateStyle: "full", timeStyle: "short" })} · {b.durationMinutes} {tCommon("min")} · {tBookings(`status.${b.status}` as `status.${string}`) ?? b.status}
                 </p>
               </CardHeader>
               <CardContent>

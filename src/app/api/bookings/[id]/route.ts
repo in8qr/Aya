@@ -5,10 +5,10 @@ import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 import { checkCapacity } from "@/lib/capacity";
 import { sendAssignmentEmail, sendConfirmationEmail, sendRejectionEmail } from "@/lib/email";
+import { logError } from "@/lib/logger";
 
 const assignBody = z.object({ assignedTeamId: z.string().uuid().nullable() });
-const confirmBody = z.object({});
-const rejectBody = z.object({});
+const rejectBody = z.object({ reason: z.string().max(2000).optional() });
 
 export async function GET(
   _request: NextRequest,
@@ -42,6 +42,7 @@ export async function GET(
   }
   if (booking.customerId === session.user.id) {
     const { attachments, ...rest } = booking;
+    void attachments; // exclude from response for customer
     return NextResponse.json({ ...rest, attachments: undefined });
   }
 
@@ -71,9 +72,14 @@ export async function PATCH(
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 
-  const body = await request.json();
+  let body: unknown;
+  try {
+    body = await request.json();
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
+  }
 
-  if ("assignedTeamId" in body) {
+  if (body !== null && typeof body === "object" && "assignedTeamId" in body) {
     const parsed = assignBody.safeParse(body);
     if (!parsed.success) {
       return NextResponse.json(parsed.error.flatten(), { status: 400 });
@@ -109,14 +115,14 @@ export async function PATCH(
             location: booking.location,
           });
         } catch (e) {
-          console.error("Assignment email failed:", e);
+          logError("Assignment email failed", e);
         }
       }
     }
     return NextResponse.json(updated);
   }
 
-  if ("status" in body && body.status === "CONFIRMED") {
+  if (typeof body === "object" && body !== null && "status" in body && (body as { status: string }).status === "CONFIRMED") {
     const capacityResult = await checkCapacity(
       booking.startAt,
       booking.durationMinutes,
@@ -143,7 +149,7 @@ export async function PATCH(
         teamMemberName: booking.assignedTeam?.name ?? null,
       });
     } catch (e) {
-      console.error("Confirmation email failed:", e);
+      logError("Confirmation email failed", e);
     }
     const updated = await prisma.booking.findUnique({
       where: { id },
@@ -152,7 +158,9 @@ export async function PATCH(
     return NextResponse.json(updated);
   }
 
-  if ("status" in body && body.status === "REJECTED") {
+  if (typeof body === "object" && body !== null && "status" in body && (body as { status: string }).status === "REJECTED") {
+    const parsed = rejectBody.safeParse(body);
+    const reason = parsed.success && parsed.data.reason ? parsed.data.reason.trim() : null;
     await prisma.booking.update({
       where: { id },
       data: { status: "REJECTED" },
@@ -163,9 +171,10 @@ export async function PATCH(
         customerName: booking.customer.name,
         packageName: booking.package.name,
         startAt: booking.startAt,
+        reason: reason ?? undefined,
       });
     } catch (e) {
-      console.error("Rejection email failed:", e);
+      logError("Rejection email failed", e);
     }
     const updated = await prisma.booking.findUnique({
       where: { id },

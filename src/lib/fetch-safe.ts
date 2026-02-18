@@ -33,8 +33,7 @@ export async function fetchJson<T>(url: string, options?: RequestInit): Promise<
     } catch {
       return { ok: false, error: "Invalid response from server" };
     }
-  } catch (e) {
-    const message = e instanceof Error ? e.message : String(e);
+  } catch {
     return {
       ok: false,
       error: "Could not connect. Is the server running? Is the database running?",
