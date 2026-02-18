@@ -67,9 +67,14 @@ npm ci --production=false || error "Failed to install dependencies"
 log "Generating Prisma Client..."
 npx prisma generate || error "Failed to generate Prisma Client"
 
-# Run database migrations
-log "Running database migrations..."
-npx prisma migrate deploy || warning "Migration failed or no migrations to run"
+# Sync database schema (use migrations if present, otherwise db push for existing DBs)
+if [ -d "prisma/migrations" ] && [ -n "$(ls -A prisma/migrations 2>/dev/null)" ]; then
+  log "Running database migrations..."
+  npx prisma migrate deploy || warning "Migration failed"
+else
+  log "Syncing database schema (no migrations folder)..."
+  npx prisma db push --accept-data-loss=false || warning "Database schema sync had issues"
+fi
 
 # Build application
 log "Building application..."
