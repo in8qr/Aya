@@ -13,7 +13,6 @@ import { useTranslations } from "next-intl";
 
 function LoginForm() {
   const t = useTranslations("auth");
-  const tCommon = useTranslations("common");
   const locale = useLocale();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") ?? "/";

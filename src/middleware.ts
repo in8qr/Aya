@@ -9,7 +9,6 @@ const nextIntlMiddleware = createMiddleware(routing);
 const adminPrefix = "/admin";
 const teamPrefix = "/team";
 const customerPrefixes = ["/bookings", "/booking"];
-const localePrefix = "/:locale(en|ar)";
 
 function getLocaleFromPath(pathname: string): string {
   const segments = pathname.split("/").filter(Boolean);

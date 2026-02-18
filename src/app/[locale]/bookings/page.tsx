@@ -46,7 +46,7 @@ export default function MyBookingsPage() {
                 <CardHeader className="flex flex-row items-center justify-between">
                   <CardTitle className="text-lg">{b.package.name}</CardTitle>
                   <span className="text-sm font-normal text-muted-foreground">
-                    {t(`status.${b.status}` as any) ?? b.status}
+                    {t(`status.${b.status}` as `status.${string}`) ?? b.status}
                   </span>
                 </CardHeader>
                 <CardContent>

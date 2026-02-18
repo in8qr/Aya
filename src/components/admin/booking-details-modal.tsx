@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -10,7 +11,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
+import { useTranslations } from "next-intl";
 
 type Booking = {
   id: string;
@@ -27,19 +36,17 @@ type Booking = {
 
 type TeamMember = { id: string; name: string; email: string };
 
-export function BookingDetailsModal({
-  bookingId,
-  onClose,
-}: {
-  bookingId: string;
-  onClose: () => void;
-}) {
+export function BookingDetailsModal({ bookingId }: { bookingId: string }) {
   const [booking, setBooking] = useState<Booking | null>(null);
   const [team, setTeam] = useState<TeamMember[]>([]);
   const [assigning, setAssigning] = useState(false);
   const [confirming, setConfirming] = useState(false);
   const [rejecting, setRejecting] = useState(false);
+  const [rejectDialogOpen, setRejectDialogOpen] = useState(false);
+  const [rejectReason, setRejectReason] = useState("");
   const { toast } = useToast();
+  const t = useTranslations("adminBooking");
+  const tCommon = useTranslations("common");
 
   useEffect(() => {
     fetch(`/api/bookings/${bookingId}`)
@@ -86,15 +93,16 @@ export function BookingDetailsModal({
     toast({ title: "Booking confirmed", description: "Customer will receive a confirmation email." });
   }
 
-  async function handleReject() {
-    if (!confirm("Reject this booking? The customer will receive a rejection email.")) return;
+  async function handleReject(reason: string) {
     setRejecting(true);
+    setRejectDialogOpen(false);
     const res = await fetch(`/api/bookings/${bookingId}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ status: "REJECTED" }),
+      body: JSON.stringify({ status: "REJECTED", reason: reason.trim() || undefined }),
     });
     setRejecting(false);
+    setRejectReason("");
     if (!res.ok) {
       const data = await res.json();
       toast({ title: "Error", description: data.error ?? "Failed to reject", variant: "destructive" });
@@ -102,7 +110,7 @@ export function BookingDetailsModal({
     }
     const updated = await res.json();
     setBooking(updated);
-    toast({ title: "Booking rejected" });
+    toast({ title: "Booking rejected", description: "Customer will receive a rejection email." });
   }
 
   if (!booking) return <p className="text-muted-foreground">Loading…</p>;
@@ -153,9 +161,40 @@ export function BookingDetailsModal({
           </Button>
         )}
         {canReject && (
-          <Button variant="destructive" onClick={handleReject} disabled={rejecting}>
-            Reject
-          </Button>
+          <>
+            <Button variant="destructive" onClick={() => setRejectDialogOpen(true)} disabled={rejecting}>
+              {t("reject")}
+            </Button>
+            <Dialog open={rejectDialogOpen} onOpenChange={setRejectDialogOpen}>
+              <DialogContent className="sm:max-w-md border-border bg-card">
+                <DialogHeader>
+                  <DialogTitle>{t("reject")}</DialogTitle>
+                </DialogHeader>
+                <p className="text-sm text-muted-foreground">
+                  The customer will receive a rejection email. You can add a reason below (it will be included in the email).
+                </p>
+                <div>
+                  <Label htmlFor="reject-reason">{t("rejectReason")}</Label>
+                  <Textarea
+                    id="reject-reason"
+                    placeholder={t("rejectReasonPlaceholder")}
+                    value={rejectReason}
+                    onChange={(e) => setRejectReason(e.target.value)}
+                    className="mt-1 min-h-[4rem] resize-y"
+                    maxLength={2000}
+                  />
+                </div>
+                <DialogFooter className="gap-2 sm:gap-0">
+                  <Button variant="outline" onClick={() => setRejectDialogOpen(false)}>
+                    {tCommon("cancel")}
+                  </Button>
+                  <Button variant="destructive" onClick={() => handleReject(rejectReason)} disabled={rejecting}>
+                    {t("rejectConfirm")}
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          </>
         )}
       </div>
 

@@ -3,12 +3,6 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { uploadReceiptFile } from "@/lib/s3";
-import { z } from "zod";
-
-const createBody = z.object({
-  name: z.string().min(1),
-  fileUrl: z.string().min(1),
-});
 
 export async function GET(
   _request: NextRequest,

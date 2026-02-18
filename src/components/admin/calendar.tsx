@@ -30,7 +30,7 @@ export function AdminCalendar({ teamOnly }: { teamOnly: boolean }) {
       const data = await res.json();
       const withColors = data
         .filter((e: { extendedProps?: { type?: string } }) => e.extendedProps?.type !== "block")
-        .map((e: { id: string; extendedProps?: { assignedTeamId?: string } }, i: number) => ({
+        .map((e: { id: string; extendedProps?: { assignedTeamId?: string } }) => ({
           ...e,
           backgroundColor: e.extendedProps?.assignedTeamId
             ? TEAM_COLORS[
@@ -72,10 +72,7 @@ export function AdminCalendar({ teamOnly }: { teamOnly: boolean }) {
             <DialogTitle>Booking details</DialogTitle>
           </DialogHeader>
           {selectedBookingId && (
-            <BookingDetailsModal
-              bookingId={selectedBookingId}
-              onClose={() => setSelectedBookingId(null)}
-            />
+            <BookingDetailsModal bookingId={selectedBookingId} />
           )}
         </DialogContent>
       </Dialog>
