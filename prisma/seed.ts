@@ -47,35 +47,48 @@ async function main() {
     },
   });
 
+  const pkgBasic = {
+    name: "Portrait Session",
+    priceDisplay: "199 \u20C1",
+    durationMinutes: 60,
+    description: "1-hour portrait session with 10 edited digital photos.",
+    deliverables: "10 high-res digital images, online gallery",
+    visible: true,
+    sortOrder: 0,
+  };
   await prisma.package.upsert({
     where: { id: "pkg-basic" },
-    update: {},
-    create: {
-      id: "pkg-basic",
-      name: "Portrait Session",
-      priceDisplay: "199 \u20C1",
-      durationMinutes: 60,
-      description: "1-hour portrait session with 10 edited digital photos.",
-      deliverables: "10 high-res digital images, online gallery",
-      visible: true,
-      sortOrder: 0,
-    },
+    update: pkgBasic,
+    create: { id: "pkg-basic", ...pkgBasic },
   });
 
+  const pkgWedding = {
+    name: "Wedding Full Day",
+    priceDisplay: "1,499 \u20C1",
+    durationMinutes: 480,
+    description: "Full-day wedding coverage.",
+    deliverables: "Full gallery, USB with all edited images",
+    visible: true,
+    sortOrder: 1,
+  };
   await prisma.package.upsert({
     where: { id: "pkg-wedding" },
-    update: {},
-    create: {
-      id: "pkg-wedding",
-      name: "Wedding Full Day",
-      priceDisplay: "1,499 \u20C1",
-      durationMinutes: 480,
-      description: "Full-day wedding coverage.",
-      deliverables: "Full gallery, USB with all edited images",
-      visible: true,
-      sortOrder: 1,
-    },
+    update: pkgWedding,
+    create: { id: "pkg-wedding", ...pkgWedding },
   });
+
+  // Ensure any package still showing euro is updated to SAR
+  const packages = await prisma.package.findMany({ select: { id: true, priceDisplay: true } });
+  for (const pkg of packages) {
+    if (pkg.priceDisplay.includes("€")) {
+      const amount = pkg.priceDisplay.replace(/€\s*/g, "").trim();
+      await prisma.package.update({
+        where: { id: pkg.id },
+        data: { priceDisplay: `${amount} \u20C1` },
+      });
+      console.log("Updated package", pkg.id, "to SAR");
+    }
+  }
 
   console.log("Seeded:", { admin: admin.email, teamMember: teamMember.email, customer: customer.email });
 }
