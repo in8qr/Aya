@@ -7,7 +7,10 @@
 set -e  # Exit on error
 
 ENVIRONMENT=${1:-production}
-APP_DIR="/home/ayaeye/apps/aya-eye"
+# Use directory containing this script's parent as app root (so it works from any clone path)
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+APP_DIR="${APP_DIR:-$SCRIPT_DIR/..}"
+APP_DIR="$(cd "$APP_DIR" && pwd)"
 LOG_FILE="$APP_DIR/logs/deploy.log"
 
 # Colors for output
@@ -29,11 +32,6 @@ error() {
 warning() {
     echo -e "${YELLOW}[WARNING]${NC} $1" | tee -a "$LOG_FILE"
 }
-
-# Check if running as correct user
-if [ "$USER" != "ayaeye" ]; then
-    error "This script should be run as the 'ayaeye' user"
-fi
 
 # Create logs directory
 mkdir -p "$APP_DIR/logs"

@@ -66,6 +66,29 @@ Open http://localhost:3000.
 - **Run:** `npm start` or use `pm2 start ecosystem.config.js`
 - Set `NEXTAUTH_URL` and `NEXT_PUBLIC_APP_URL` to your public URL. Put the app behind Nginx or Cloudflare Tunnel for HTTPS.
 
+### Update Linux and redeploy
+
+On the server (Debian/Ubuntu), to update system packages and redeploy the app:
+
+```bash
+# From the app directory (e.g. /home/ayaeye/apps/aya-eye), run as root
+# (updates apt, then runs deploy as ayaeye)
+chmod +x scripts/*.sh   # if needed
+sudo ./scripts/update-and-deploy.sh
+```
+
+Or do it in two steps:
+
+```bash
+# 1. Update system (as root)
+sudo apt-get update && sudo apt-get upgrade -y
+
+# 2. Deploy app (as ayaeye user)
+su - ayaeye -c "cd /home/ayaeye/apps/aya-eye && ./scripts/deploy.sh"
+```
+
+The deploy script (`scripts/deploy.sh`) pulls latest from `main`, runs `npm ci`, Prisma generate, migrations, build, and restarts PM2. It must be run as the `ayaeye` user.
+
 ## Business rules
 
 - New bookings get status `PENDING_REVIEW`; only admin can confirm or reject.
