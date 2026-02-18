@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useTranslations } from "next-intl";
 
 export default function RegisterPage() {
@@ -16,11 +17,16 @@ export default function RegisterPage() {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
+  const [privacyConsent, setPrivacyConsent] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (!privacyConsent) {
+      setError(t("privacyConsentRequired"));
+      return;
+    }
     setError("");
     setLoading(true);
     const res = await fetch("/api/auth/register", {
@@ -63,7 +69,22 @@ export default function RegisterPage() {
               <Label htmlFor="password">{t("password")}</Label>
               <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={8} className="mt-1" />
             </div>
-            <Button type="submit" className="w-full" disabled={loading}>
+            <div className="flex items-start gap-2">
+              <Checkbox
+                id="privacy"
+                checked={privacyConsent}
+                onCheckedChange={(v) => setPrivacyConsent(v === true)}
+                className="mt-0.5"
+              />
+              <Label htmlFor="privacy" className="text-sm font-normal cursor-pointer leading-snug">
+                {t("privacyConsentBefore")}
+                <Link href="/privacy" className="text-primary hover:underline">
+                  {t("privacyPolicyLink")}
+                </Link>
+                {t("privacyConsentAfter")}
+              </Label>
+            </div>
+            <Button type="submit" className="w-full" disabled={loading || !privacyConsent}>
               {loading ? t("creatingAccount") : t("register")}
             </Button>
           </form>
