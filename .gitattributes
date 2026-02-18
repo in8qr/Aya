@@ -1,0 +1,2 @@
+# Ensure shell scripts always use LF (fixes "command not found" on Linux when cloned on Windows)
+*.sh text eol=lf
