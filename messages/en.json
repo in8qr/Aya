@@ -177,7 +177,7 @@
     "hidden": "Hidden",
     "name": "Name",
     "priceDisplay": "Price (display)",
-    "pricePlaceholder": "199 \u20C1",
+    "pricePlaceholder": "199 SAR",
     "durationHours": "Duration (hours)",
     "durationHint": "End date/time for the customer is auto-calculated from start + this duration.",
     "durationPlaceholder": "e.g. 1, 2, 8",

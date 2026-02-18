@@ -49,7 +49,7 @@ async function main() {
 
   const pkgBasic = {
     name: "Portrait Session",
-    priceDisplay: "199 \u20C1",
+    priceDisplay: "199 SAR",
     durationMinutes: 60,
     description: "1-hour portrait session with 10 edited digital photos.",
     deliverables: "10 high-res digital images, online gallery",
@@ -64,7 +64,7 @@ async function main() {
 
   const pkgWedding = {
     name: "Wedding Full Day",
-    priceDisplay: "1,499 \u20C1",
+    priceDisplay: "1,499 SAR",
     durationMinutes: 480,
     description: "Full-day wedding coverage.",
     deliverables: "Full gallery, USB with all edited images",
@@ -77,14 +77,15 @@ async function main() {
     create: { id: "pkg-wedding", ...pkgWedding },
   });
 
-  // Ensure any package still showing euro is updated to SAR
+  // Ensure any package with euro or non-rendering symbol is updated to "SAR" (reliable in all fonts)
   const packages = await prisma.package.findMany({ select: { id: true, priceDisplay: true } });
   for (const pkg of packages) {
-    if (pkg.priceDisplay.includes("€")) {
-      const amount = pkg.priceDisplay.replace(/€\s*/g, "").trim();
+    const needsUpdate = pkg.priceDisplay.includes("€") || pkg.priceDisplay.includes("\u20C1");
+    if (needsUpdate) {
+      const amount = pkg.priceDisplay.replace(/€\s*/g, "").replace(/\u20C1/g, "").trim();
       await prisma.package.update({
         where: { id: pkg.id },
-        data: { priceDisplay: `${amount} \u20C1` },
+        data: { priceDisplay: `${amount} SAR` },
       });
       console.log("Updated package", pkg.id, "to SAR");
     }
