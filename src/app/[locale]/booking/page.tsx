@@ -183,6 +183,13 @@ function BookingContent() {
             <Label htmlFor="notes">{t("notes")}</Label>
             <Textarea id="notes" value={notes} onChange={(e) => setNotes(e.target.value)} className="mt-1" />
           </div>
+          <p className="text-sm text-muted-foreground">
+            {t("dataNoticePrefix")}
+            <Link href="/privacy" className="text-primary hover:underline">
+              {t("dataNoticeLink")}
+            </Link>
+            {t("dataNoticeSuffix")}
+          </p>
           <Button type="submit" disabled={loading || !!capacityError} className="min-h-[2.75rem] w-full sm:w-auto">
             {loading ? t("submitting") : t("submit")}
           </Button>

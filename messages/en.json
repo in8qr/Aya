@@ -40,7 +40,28 @@
     "noOnlinePayments": "No online payments. Payment is handled offline."
   },
   "footer": {
-    "copyright": "© {year} Aya Eye. All rights reserved."
+    "copyright": "© {year} Aya Eye. All rights reserved.",
+    "privacyLink": "Privacy"
+  },
+  "privacy": {
+    "title": "Privacy Policy",
+    "lastUpdated": "Last updated: February 2025. Aligned with Saudi Arabia Personal Data Protection Law (PDPL).",
+    "intro": "Aya Eye respects your privacy and complies with applicable data protection laws, including the Kingdom of Saudi Arabia Personal Data Protection Law (PDPL). This policy explains how we collect, use, store, and protect your personal data. We do not sell your data and we do not share it with third parties for their marketing.",
+    "whatWeCollectTitle": "What we collect",
+    "whatWeCollect": "When you register: name, email address, phone (optional), and a password that we store in encrypted form. When you request a booking: your chosen package, date, time, location and notes (we link the booking to your account). If you are assigned to a booking as a team member, we use your name and email to send you assignment and booking-related emails.",
+    "howWeUseTitle": "How we use your data",
+    "howWeUse": "We use your data only to: manage your account; process and manage your booking requests; send you booking-related emails (e.g. confirmation or rejection); assign team members and send them necessary booking details; and, where applicable, store receipts or attachments related to your booking. We do not use your data for marketing or profiling unless you have given separate consent.",
+    "storageTitle": "How we store your data",
+    "storage": "Your data is stored in a secure database (access-controlled). Passwords are hashed and not stored in plain text. Any files you or we attach (e.g. receipts) are stored in a secure, access-controlled storage system. We use technical and organisational measures to protect your data against unauthorised access, loss or misuse.",
+    "noSharingTitle": "We do not sell or share your data",
+    "noSharing": "We do not sell your personal data to anyone. We do not share your data with third parties for their marketing or advertising. We only use trusted service providers that help us run the service (e.g. hosting, email delivery, and secure file storage). Those providers are bound by strict confidentiality and use your data only to perform the services we request. We do not transfer your data outside the Kingdom for purposes other than necessary technical processing (e.g. email delivery) where safeguards apply.",
+    "retentionTitle": "How long we keep your data",
+    "retention": "We keep your account and booking data for as long as your account is active and as needed to provide the service, resolve disputes, and comply with legal obligations. You may request deletion of your data (see Your rights).",
+    "yourRightsTitle": "Your rights (PDPL)",
+    "yourRights": "You have the right to: know what personal data we hold about you; request a copy of your data; ask us to correct inaccurate data; request deletion of your data (where applicable); and object to or restrict certain processing. We will respond to your request within 30 days as required by PDPL. To exercise these rights, contact us using the details published on this website.",
+    "contactTitle": "Contact & requests",
+    "contact": "For any privacy-related request (access, correction, deletion, or complaint), contact us by email or through the contact details published on this website. We will process your request in line with the PDPL and our internal procedures.",
+    "backToHome": "Back to home"
   },
   "about": {
     "title": "About",
@@ -79,6 +100,9 @@
     "endAuto": "End date & time (set automatically)",
     "location": "Location (optional)",
     "notes": "Notes (optional)",
+    "dataNoticePrefix": "By submitting, your details will be used as set out in our ",
+    "dataNoticeLink": "Privacy Policy",
+    "dataNoticeSuffix": ".",
     "submit": "Submit request",
     "submitting": "Submitting…",
     "successTitle": "Request submitted",
@@ -122,7 +146,12 @@
     "invalidCredentials": "Invalid email or password.",
     "dbError": "Database is not running. Start Docker, then run: npx prisma db push && npm run db:seed. Check logs/app.log for details.",
     "serverError": "Could not connect to the server. Is it running? Check logs/app.log.",
-    "registrationFailed": "Registration failed."
+    "registrationFailed": "Registration failed.",
+    "privacyConsent": "I have read the Privacy Policy and agree to the processing of my personal data as described.",
+    "privacyConsentBefore": "I have read the ",
+    "privacyPolicyLink": "Privacy Policy",
+    "privacyConsentAfter": " and agree to the processing of my personal data as described.",
+    "privacyConsentRequired": "You must agree to the Privacy Policy to register."
   },
   "admin": {
     "calendar": "Calendar",
@@ -170,6 +199,9 @@
     "assign": "Assign",
     "confirm": "Confirm",
     "reject": "Reject",
+    "rejectReason": "Reason for rejection (optional)",
+    "rejectReasonPlaceholder": "e.g. Date no longer available, fully booked…",
+    "rejectConfirm": "Reject booking",
     "assignedTo": "Assigned to",
     "receipts": "Receipts",
     "addReceipt": "Add receipt",
