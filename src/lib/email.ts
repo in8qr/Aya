@@ -93,9 +93,13 @@ export async function sendRejectionEmail(params: {
   customerName: string;
   packageName: string;
   startAt: Date;
+  reason?: string | null;
 }) {
-  const { to, customerName, packageName, startAt } = params;
+  const { to, customerName, packageName, startAt, reason } = params;
   const dateStr = startAt.toLocaleString(undefined, { dateStyle: "full", timeStyle: "short" });
+  const reasonBlock = reason?.trim()
+    ? `<p><strong>Reason:</strong></p><p>${escapeHtml(reason.trim())}</p>`
+    : "";
 
   const resend = getResend();
   if (!resend) return;
@@ -105,11 +109,20 @@ export async function sendRejectionEmail(params: {
     subject: `Booking request update: ${packageName}`,
     html: `
       <h2>Booking request update</h2>
-      <p>Hi ${customerName},</p>
-      <p>Unfortunately we are unable to confirm your booking request for <strong>${packageName}</strong> on <strong>${dateStr}</strong>.</p>
+      <p>Hi ${escapeHtml(customerName)},</p>
+      <p>Unfortunately we are unable to confirm your booking request for <strong>${escapeHtml(packageName)}</strong> on <strong>${escapeHtml(dateStr)}</strong>.</p>
+      ${reasonBlock}
       <p>Please feel free to submit a new request for another date or time, or contact us if you have any questions.</p>
       <p>— Aya Eye</p>
     `,
   });
   if (error) throw new Error(JSON.stringify(error));
+}
+
+function escapeHtml(s: string): string {
+  return s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
 }
