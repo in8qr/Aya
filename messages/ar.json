@@ -177,7 +177,7 @@
     "hidden": "مخفي",
     "name": "الاسم",
     "priceDisplay": "السعر (عرض)",
-    "pricePlaceholder": "€199",
+    "pricePlaceholder": "199 \u20C1",
     "durationHours": "المدة (ساعات)",
     "durationHint": "يتم حساب تاريخ ووقت انتهاء الجلسة تلقائياً من البداية + هذه المدة.",
     "durationPlaceholder": "مثال: 1، 2، 8",

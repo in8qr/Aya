@@ -50,7 +50,7 @@ model User {
 model Package {
   id              String   @id @default(uuid())
   name            String
-  priceDisplay    String   // e.g. "€500" or "From €300"
+  priceDisplay    String   // SAR only, e.g. "500 SAR" or "1,499 SAR"
   durationMinutes Int
   description     String?
   deliverables    String?  // JSON or text list

@@ -53,7 +53,7 @@ async function main() {
     create: {
       id: "pkg-basic",
       name: "Portrait Session",
-      priceDisplay: "€199",
+      priceDisplay: "199 \u20C1",
       durationMinutes: 60,
       description: "1-hour portrait session with 10 edited digital photos.",
       deliverables: "10 high-res digital images, online gallery",
@@ -68,7 +68,7 @@ async function main() {
     create: {
       id: "pkg-wedding",
       name: "Wedding Full Day",
-      priceDisplay: "€1,499",
+      priceDisplay: "1,499 \u20C1",
       durationMinutes: 480,
       description: "Full-day wedding coverage.",
       deliverables: "Full gallery, USB with all edited images",
