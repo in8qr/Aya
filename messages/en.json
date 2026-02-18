@@ -1,0 +1,184 @@
+{
+  "common": {
+    "loading": "Loading…",
+    "error": "Something went wrong",
+    "backToSite": "Back to site",
+    "brand": "Aya Eye",
+    "admin": "Admin",
+    "team": "Team",
+    "all": "All",
+    "none": "— None —",
+    "save": "Save",
+    "cancel": "Cancel",
+    "submit": "Submit",
+    "close": "Close",
+    "delete": "Delete",
+    "edit": "Edit",
+    "view": "View",
+    "hour": "hr",
+    "min": "min"
+  },
+  "nav": {
+    "portfolio": "Portfolio",
+    "packages": "Packages",
+    "about": "About",
+    "contact": "Contact",
+    "dashboard": "Dashboard",
+    "myCalendar": "My calendar",
+    "myBookings": "My bookings",
+    "logOut": "Log out",
+    "signOutConfirm": "Are you sure you want to sign out?",
+    "logIn": "Log in",
+    "bookSession": "Book a session"
+  },
+  "home": {
+    "tagline": "Photography & storytelling",
+    "title": "Capturing your moments",
+    "subtitle": "Portraits, weddings, and events. Dedicated to excellence and storytelling.",
+    "viewPortfolio": "View portfolio",
+    "viewPackages": "View packages",
+    "noOnlinePayments": "No online payments. Payment is handled offline."
+  },
+  "footer": {
+    "copyright": "© {year} Aya Eye. All rights reserved."
+  },
+  "about": {
+    "title": "About",
+    "intro": "Aya Eye offers professional photography for portraits, weddings, and events. We work with you to capture the moments that matter.",
+    "bookingNote": "Booking is by request only. After you submit a request, we will review it and confirm or suggest an alternative. Payment is handled offline—no online payments."
+  },
+  "contact": {
+    "title": "Contact",
+    "intro": "Have a question or want to discuss a project? Send a booking request with your details and we'll get back to you.",
+    "requestBooking": "Request a booking"
+  },
+  "portfolio": {
+    "title": "Portfolio",
+    "loading": "Loading…",
+    "errorTitle": "Something went wrong",
+    "errorHint": "Check logs/app.log. Ensure Docker and the database are running.",
+    "noPhotos": "No photos yet."
+  },
+  "packages": {
+    "title": "Packages",
+    "noOnlinePayments": "No online payments. Payment is handled offline.",
+    "loading": "Loading…",
+    "errorTitle": "Something went wrong",
+    "errorHint": "Check logs/app.log for details. Make sure Docker (PostgreSQL) is running and you ran: npx prisma db push && npm run db:seed",
+    "noPackages": "No packages available yet.",
+    "requestBooking": "Request booking"
+  },
+  "booking": {
+    "title": "Request a booking",
+    "offlineNote": "No online payments. Payment is handled offline.",
+    "package": "Package",
+    "selectPackage": "Select a package",
+    "startDate": "Start date & time",
+    "date": "Date",
+    "time": "Time",
+    "endAuto": "End date & time (set automatically)",
+    "location": "Location (optional)",
+    "notes": "Notes (optional)",
+    "submit": "Submit request",
+    "submitting": "Submitting…",
+    "successTitle": "Request submitted",
+    "successMessage": "Your booking request has been received and is pending review. We'll contact you to confirm or suggest an alternative.",
+    "viewMyBookings": "View my bookings",
+    "requestFailed": "Request failed",
+    "submitError": "Could not submit booking request."
+  },
+  "bookings": {
+    "title": "My bookings",
+    "loading": "Loading…",
+    "noBookings": "You have no bookings yet.",
+    "status": {
+      "PENDING_REVIEW": "Pending review",
+      "ASSIGNED": "Assigned",
+      "CONFIRMED": "Confirmed",
+      "REJECTED": "Rejected",
+      "CANCELLED": "Cancelled",
+      "COMPLETED": "Completed",
+      "NOSHOW": "No show"
+    },
+    "requestNewBooking": "Request a new booking",
+    "photographer": "Photographer",
+    "locationLabel": "Location"
+  },
+  "auth": {
+    "login": "Log in",
+    "loginDescription": "Enter your email and password.",
+    "email": "Email",
+    "password": "Password",
+    "signIn": "Sign in",
+    "signingIn": "Signing in…",
+    "noAccount": "Don't have an account?",
+    "register": "Register",
+    "createAccount": "Create an account",
+    "createAccountDescription": "Register to request bookings.",
+    "name": "Name",
+    "phoneOptional": "Phone (optional)",
+    "creatingAccount": "Creating account…",
+    "haveAccount": "Already have an account?",
+    "invalidCredentials": "Invalid email or password.",
+    "dbError": "Database is not running. Start Docker, then run: npx prisma db push && npm run db:seed. Check logs/app.log for details.",
+    "serverError": "Could not connect to the server. Is it running? Check logs/app.log.",
+    "registrationFailed": "Registration failed."
+  },
+  "admin": {
+    "calendar": "Calendar",
+    "bookings": "Bookings",
+    "packages": "Packages",
+    "portfolio": "Portfolio",
+    "team": "Team",
+    "availability": "Availability",
+    "blockedDays": "Blocked days / times",
+    "blockedDaysDescription": "Block full days or specific time ranges so they are not bookable.",
+    "capacityOverrides": "Capacity overrides",
+    "capacityOverridesDescription": "Override how many confirmed bookings are allowed on a specific day.",
+    "teamUnavailability": "Team unavailability",
+    "teamUnavailabilityDescription": "Mark when a team member is unavailable (reduces capacity for that period)."
+  },
+  "adminPackages": {
+    "addPackage": "Add package",
+    "editPackage": "Edit package",
+    "newPackage": "New package",
+    "edit": "Edit",
+    "delete": "Delete",
+    "visible": "Visible",
+    "hidden": "Hidden",
+    "name": "Name",
+    "priceDisplay": "Price (display)",
+    "pricePlaceholder": "€199",
+    "durationHours": "Duration (hours)",
+    "durationHint": "End date/time for the customer is auto-calculated from start + this duration.",
+    "durationPlaceholder": "e.g. 1, 2, 8",
+    "description": "Description",
+    "deliverables": "Deliverables",
+    "visibleOnSite": "Visible on public site",
+    "deleteConfirm": "Delete this package?",
+    "toastSaved": "Saved",
+    "toastDeleted": "Deleted",
+    "toastError": "Error",
+    "toastFailedSave": "Failed to save",
+    "toastFailedDelete": "Failed to delete"
+  },
+  "team": {
+    "myBookings": "My bookings",
+    "assignedBookings": "Assigned bookings"
+  },
+  "adminBooking": {
+    "assign": "Assign",
+    "confirm": "Confirm",
+    "reject": "Reject",
+    "assignedTo": "Assigned to",
+    "receipts": "Receipts",
+    "addReceipt": "Add receipt",
+    "receiptTitle": "Title",
+    "uploadFile": "Upload file",
+    "noAttachments": "No receipts yet."
+  },
+  "locale": {
+    "en": "English",
+    "ar": "العربية"
+  }
+}

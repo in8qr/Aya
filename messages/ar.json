@@ -1,0 +1,184 @@
+{
+  "common": {
+    "loading": "جاري التحميل…",
+    "error": "حدث خطأ",
+    "backToSite": "العودة للموقع",
+    "brand": "عين آية",
+    "admin": "الإدارة",
+    "team": "الفريق",
+    "all": "الكل",
+    "none": "— لا شيء —",
+    "save": "حفظ",
+    "cancel": "إلغاء",
+    "submit": "إرسال",
+    "close": "إغلاق",
+    "delete": "حذف",
+    "edit": "تعديل",
+    "view": "عرض",
+    "hour": "س",
+    "min": "د"
+  },
+  "nav": {
+    "portfolio": "معرض الأعمال",
+    "packages": "الباقات",
+    "about": "من نحن",
+    "contact": "اتصل بنا",
+    "dashboard": "لوحة التحكم",
+    "myCalendar": "تقويمي",
+    "myBookings": "حجوزاتي",
+    "logOut": "تسجيل الخروج",
+    "signOutConfirm": "هل أنت متأكد من تسجيل الخروج؟",
+    "logIn": "تسجيل الدخول",
+    "bookSession": "احجز جلسة"
+  },
+  "home": {
+    "tagline": "التصوير الفوتوغرافي وسرد القصص",
+    "title": "نلتقط لحظاتك",
+    "subtitle": "صور شخصية، أعراس، ومناسبات. نلتزم بالتميز وسرد القصص.",
+    "viewPortfolio": "معرض الأعمال",
+    "viewPackages": "الباقات",
+    "noOnlinePayments": "لا مدفوعات إلكترونية. يتم الدفع خارج الموقع."
+  },
+  "footer": {
+    "copyright": "© {year} عين آية. جميع الحقوق محفوظة."
+  },
+  "about": {
+    "title": "من نحن",
+    "intro": "تقدم عين آية تصويراً احترافياً للصور الشخصية والأعراس والمناسبات. نعمل معك لالتقاط اللحظات التي تهمك.",
+    "bookingNote": "الحجز بطلب فقط. بعد إرسال طلبك، نراجعه ونؤكد أو نقترح بديلاً. الدفع يتم خارج الموقع—بدون مدفوعات إلكترونية."
+  },
+  "contact": {
+    "title": "اتصل بنا",
+    "intro": "لديك سؤال أو تريد مناقشة مشروع؟ أرسل طلب حجز مع تفاصيلك وسنتواصل معك.",
+    "requestBooking": "طلب حجز"
+  },
+  "portfolio": {
+    "title": "معرض الأعمال",
+    "loading": "جاري التحميل…",
+    "errorTitle": "حدث خطأ",
+    "errorHint": "راجع logs/app.log. تأكد من تشغيل Docker وقاعدة البيانات.",
+    "noPhotos": "لا توجد صور بعد."
+  },
+  "packages": {
+    "title": "الباقات",
+    "noOnlinePayments": "لا مدفوعات إلكترونية. يتم الدفع خارج الموقع.",
+    "loading": "جاري التحميل…",
+    "errorTitle": "حدث خطأ",
+    "errorHint": "راجع logs/app.log. تأكد من تشغيل Docker (PostgreSQL) وتنفيذ: npx prisma db push && npm run db:seed",
+    "noPackages": "لا توجد باقات متاحة حالياً.",
+    "requestBooking": "طلب حجز"
+  },
+  "booking": {
+    "title": "طلب حجز",
+    "offlineNote": "لا مدفوعات إلكترونية. يتم الدفع خارج الموقع.",
+    "package": "الباقة",
+    "selectPackage": "اختر باقة",
+    "startDate": "التاريخ والوقت",
+    "date": "التاريخ",
+    "time": "الوقت",
+    "endAuto": "نهاية الجلسة (تُحدد تلقائياً)",
+    "location": "المكان (اختياري)",
+    "notes": "ملاحظات (اختياري)",
+    "submit": "إرسال الطلب",
+    "submitting": "جاري الإرسال…",
+    "successTitle": "تم استلام الطلب",
+    "successMessage": "تم استلام طلب الحجز وهو قيد المراجعة. سنتواصل معك للتأكيد أو اقتراح بديل.",
+    "viewMyBookings": "عرض حجوزاتي",
+    "requestFailed": "فشل الطلب",
+    "submitError": "تعذر إرسال طلب الحجز."
+  },
+  "bookings": {
+    "title": "حجوزاتي",
+    "loading": "جاري التحميل…",
+    "noBookings": "لا توجد حجوزات بعد.",
+    "status": {
+      "PENDING_REVIEW": "قيد المراجعة",
+      "ASSIGNED": "تم التعيين",
+      "CONFIRMED": "مؤكد",
+      "REJECTED": "مرفوض",
+      "CANCELLED": "ملغى",
+      "COMPLETED": "مكتمل",
+      "NOSHOW": "عدم الحضور"
+    },
+    "requestNewBooking": "طلب حجز جديد",
+    "photographer": "المصور",
+    "locationLabel": "المكان"
+  },
+  "auth": {
+    "login": "تسجيل الدخول",
+    "loginDescription": "أدخل بريدك الإلكتروني وكلمة المرور.",
+    "email": "البريد الإلكتروني",
+    "password": "كلمة المرور",
+    "signIn": "دخول",
+    "signingIn": "جاري تسجيل الدخول…",
+    "noAccount": "ليس لديك حساب؟",
+    "register": "إنشاء حساب",
+    "createAccount": "إنشاء حساب",
+    "createAccountDescription": "سجّل لطلب الحجوزات.",
+    "name": "الاسم",
+    "phoneOptional": "الهاتف (اختياري)",
+    "creatingAccount": "جاري إنشاء الحساب…",
+    "haveAccount": "لديك حساب بالفعل؟",
+    "invalidCredentials": "البريد الإلكتروني أو كلمة المرور غير صحيحة.",
+    "dbError": "قاعدة البيانات غير مشغّلة. شغّل Docker ثم نفّذ: npx prisma db push && npm run db:seed. راجع logs/app.log.",
+    "serverError": "تعذر الاتصال بالخادم. هل الخادم يعمل؟ راجع logs/app.log.",
+    "registrationFailed": "فشل التسجيل."
+  },
+  "admin": {
+    "calendar": "التقويم",
+    "bookings": "الحجوزات",
+    "packages": "الباقات",
+    "portfolio": "معرض الأعمال",
+    "team": "الفريق",
+    "availability": "الجدولة",
+    "blockedDays": "الأيام/الأوقات المحظورة",
+    "blockedDaysDescription": "احظر أياماً كاملة أو فترات زمنية لعدم إتاحتها للحجز.",
+    "capacityOverrides": "تجاوزات السعة",
+    "capacityOverridesDescription": "تحديد عدد الحجوزات المؤكدة المسموح بها في يوم معين.",
+    "teamUnavailability": "عدم توفر الفريق",
+    "teamUnavailabilityDescription": "حدد فترات عدم توفر أحد أعضاء الفريق (تقلل السعة في تلك الفترة)."
+  },
+  "adminPackages": {
+    "addPackage": "إضافة باقة",
+    "editPackage": "تعديل الباقة",
+    "newPackage": "باقة جديدة",
+    "edit": "تعديل",
+    "delete": "حذف",
+    "visible": "ظاهر",
+    "hidden": "مخفي",
+    "name": "الاسم",
+    "priceDisplay": "السعر (عرض)",
+    "pricePlaceholder": "€199",
+    "durationHours": "المدة (ساعات)",
+    "durationHint": "يتم حساب تاريخ ووقت انتهاء الجلسة تلقائياً من البداية + هذه المدة.",
+    "durationPlaceholder": "مثال: 1، 2، 8",
+    "description": "الوصف",
+    "deliverables": "المخرجات",
+    "visibleOnSite": "ظاهر في الموقع للعملاء",
+    "deleteConfirm": "حذف هذه الباقة؟",
+    "toastSaved": "تم الحفظ",
+    "toastDeleted": "تم الحذف",
+    "toastError": "خطأ",
+    "toastFailedSave": "فشل الحفظ",
+    "toastFailedDelete": "فشل الحذف"
+  },
+  "team": {
+    "myBookings": "حجوزاتي",
+    "assignedBookings": "الحجوزات المعينة لي"
+  },
+  "adminBooking": {
+    "assign": "تعيين",
+    "confirm": "تأكيد",
+    "reject": "رفض",
+    "assignedTo": "معين إلى",
+    "receipts": "الإيصالات",
+    "addReceipt": "إضافة إيصال",
+    "receiptTitle": "العنوان",
+    "uploadFile": "رفع ملف",
+    "noAttachments": "لا إيصالات بعد."
+  },
+  "locale": {
+    "en": "English",
+    "ar": "العربية"
+  }
+}

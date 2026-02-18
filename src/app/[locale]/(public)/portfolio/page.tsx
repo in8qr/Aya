@@ -1,0 +1,107 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import Image from "next/image";
+import { useTranslations } from "next-intl";
+import { cn } from "@/lib/utils";
+import { fetchJson } from "@/lib/fetch-safe";
+
+type PortfolioItem = {
+  id: string;
+  category: string;
+  tags: string[];
+  imageUrl: string;
+  sortOrder: number;
+  visible: boolean;
+};
+
+export default function PortfolioPage() {
+  const t = useTranslations("portfolio");
+  const tCommon = useTranslations("common");
+  const [items, setItems] = useState<PortfolioItem[]>([]);
+  const [category, setCategory] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    setError(null);
+    const params = new URLSearchParams();
+    if (category) params.set("category", category);
+    fetchJson<PortfolioItem[]>(`/api/portfolio?${params}`)
+      .then((result) => {
+        if (result.ok) {
+          setItems(Array.isArray(result.data) ? result.data : []);
+        } else {
+          setError(result.error);
+          setItems([]);
+        }
+      })
+      .finally(() => setLoading(false));
+  }, [category]);
+
+  const categories = Array.from(new Set(items.map((i) => i.category))).sort();
+
+  return (
+    <div className="container mx-auto px-4 py-16">
+      <h1 className="font-display text-4xl font-medium tracking-tight mb-8">{t("title")}</h1>
+      {categories.length > 0 && (
+        <div className="flex gap-2 mb-8 flex-wrap">
+          <button
+            onClick={() => setCategory(null)}
+            className={cn(
+              "px-4 py-2 rounded-md text-sm font-medium transition-colors",
+              !category ? "bg-primary text-primary-foreground" : "bg-muted hover:bg-muted/80"
+            )}
+          >
+            {tCommon("all")}
+          </button>
+          {categories.map((c) => (
+            <button
+              key={c}
+              onClick={() => setCategory(c)}
+              className={cn(
+                "px-4 py-2 rounded-md text-sm font-medium transition-colors",
+                category === c ? "bg-primary text-primary-foreground" : "bg-muted hover:bg-muted/80"
+              )}
+            >
+              {c}
+            </button>
+          ))}
+        </div>
+      )}
+      {loading ? (
+        <p className="text-muted-foreground">{t("loading")}</p>
+      ) : error ? (
+        <div className="rounded-md bg-destructive/10 border border-destructive/20 p-4 text-sm text-destructive">
+          <p className="font-medium">{t("errorTitle")}</p>
+          <p className="mt-1">{error}</p>
+          <p className="mt-2 text-muted-foreground">{t("errorHint")}</p>
+        </div>
+      ) : items.length === 0 ? (
+        <p className="text-muted-foreground">{t("noPhotos")}</p>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+          {items.map((item) => (
+            <div key={item.id} className="rounded-lg overflow-hidden border bg-card">
+              <div className="aspect-[4/3] relative">
+                <Image
+                  src={item.imageUrl}
+                  alt={item.category}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, 33vw"
+                />
+              </div>
+              <div className="p-3">
+                <p className="font-medium">{item.category}</p>
+                {item.tags.length > 0 && (
+                  <p className="text-sm text-muted-foreground">{item.tags.join(", ")}</p>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}

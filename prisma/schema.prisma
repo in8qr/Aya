@@ -1,0 +1,144 @@
+// Aya Eye - Prisma Schema
+// PostgreSQL
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  TEAM
+  CUSTOMER
+}
+
+enum BookingStatus {
+  PENDING_REVIEW
+  ASSIGNED
+  CONFIRMED
+  REJECTED
+  CANCELLED
+  COMPLETED
+  NOSHOW
+}
+
+enum AttachmentType {
+  RECEIPT
+}
+
+model User {
+  id        String   @id @default(uuid())
+  role      Role
+  name      String
+  email     String   @unique
+  phone     String?
+  password  String
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  // Relations
+  customerBookings   Booking[]  @relation("CustomerBookings")
+  assignedBookings  Booking[]  @relation("AssignedBookings")
+  teamUnavailables  TeamUnavailable[]
+  uploadedAttachments Attachment[] @relation("UploadedAttachments")
+}
+
+model Package {
+  id              String   @id @default(uuid())
+  name            String
+  priceDisplay    String   // e.g. "€500" or "From €300"
+  durationMinutes Int
+  description     String?
+  deliverables    String?  // JSON or text list
+  visible         Boolean  @default(true)
+  sortOrder       Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  bookings Booking[]
+}
+
+model Booking {
+  id              String        @id @default(uuid())
+  customerId      String
+  packageId       String
+  assignedTeamId  String?
+  startAt        DateTime
+  durationMinutes Int
+  status         BookingStatus @default(PENDING_REVIEW)
+  location       String?
+  notes          String?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  customer   User   @relation("CustomerBookings", fields: [customerId], references: [id], onDelete: Cascade)
+  package    Package @relation(fields: [packageId], references: [id], onDelete: Restrict)
+  assignedTeam User? @relation("AssignedBookings", fields: [assignedTeamId], references: [id], onDelete: SetNull)
+  attachments Attachment[]
+}
+
+model Attachment {
+  id         String         @id @default(uuid())
+  bookingId  String
+  type       AttachmentType @default(RECEIPT)
+  name       String         // display name/title for the attachment
+  fileUrl    String
+  uploadedById String
+  uploadedAt DateTime       @default(now())
+
+  booking     Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  uploadedBy  User    @relation("UploadedAttachments", fields: [uploadedById], references: [id], onDelete: Cascade)
+}
+
+model DayBlock {
+  id      String    @id @default(uuid())
+  day     DateTime  // date only (start of day UTC or use @db.Date if supported)
+  startAt DateTime? // nullable = full day or range start
+  endAt   DateTime? // nullable = full day or range end
+  fullDay Boolean   @default(false)
+  reason  String?
+  createdAt DateTime @default(now())
+
+  @@index([day])
+}
+
+model TeamUnavailable {
+  id         String   @id @default(uuid())
+  teamUserId String
+  startAt    DateTime
+  endAt      DateTime
+  reason     String?
+  createdAt  DateTime @default(now())
+
+  teamUser User @relation(fields: [teamUserId], references: [id], onDelete: Cascade)
+
+  @@index([teamUserId])
+  @@index([startAt, endAt])
+}
+
+model CapacityOverride {
+  id       String   @id @default(uuid())
+  day      DateTime // date only
+  capacity Int      // override value for that day
+  reason   String?
+  createdAt DateTime @default(now())
+
+  @@unique([day])
+  @@index([day])
+}
+
+// Portfolio: single list of photos with category and tags (no separate Album entity)
+model PortfolioItem {
+  id        String   @id @default(uuid())
+  category  String   // e.g. "Weddings", "Portraits"
+  tags      String[] // array of tags for filtering
+  imageUrl  String
+  sortOrder Int      @default(0)
+  visible   Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

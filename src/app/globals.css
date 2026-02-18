@@ -1,0 +1,87 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  /* Aya Eye: dark editorial theme app-wide (Spoils Trophy–inspired) */
+  :root {
+    --background: 0 0% 4%;
+    --foreground: 0 0% 98%;
+    --card: 0 0% 6%;
+    --card-foreground: 0 0% 98%;
+    --popover: 0 0% 6%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 45 30% 92%;
+    --primary-foreground: 0 0% 4%;
+    --secondary: 0 0% 12%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 0% 12%;
+    --muted-foreground: 0 0% 65%;
+    --accent: 0 0% 14%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 65% 50%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 14%;
+    --input: 0 0% 14%;
+    --ring: 45 30% 70%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 262 52% 55%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 262 52% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Date & time inputs – aligned with design system (dark theme).
+   Avoid filter on the input/indicator so the native picker popup can open. */
+@layer components {
+  input[type="date"],
+  input[type="time"],
+  input[type="datetime-local"] {
+    @apply text-foreground;
+    color-scheme: dark;
+  }
+  input[type="date"]::-webkit-calendar-picker-indicator,
+  input[type="time"]::-webkit-calendar-picker-indicator,
+  input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    opacity: 0.8;
+  }
+  input[type="date"]::-webkit-datetime-edit,
+  input[type="time"]::-webkit-datetime-edit,
+  input[type="datetime-local"]::-webkit-datetime-edit {
+    @apply text-foreground;
+  }
+  input[type="date"]::-webkit-datetime-edit-fields-wrapper,
+  input[type="time"]::-webkit-datetime-edit-fields-wrapper,
+  input[type="datetime-local"]::-webkit-datetime-edit-fields-wrapper {
+    @apply text-foreground;
+  }
+}

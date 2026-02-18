@@ -1,0 +1,36 @@
+# Dependencies
+node_modules
+.pnp
+.pnp.js
+
+# Build
+.next
+out
+build
+dist
+
+# Env (keep .env.example)
+.env
+.env.local
+.env.*.local
+
+# Logs (keep for local debugging; optional to commit empty logs/ or ignore)
+logs/
+*.log
+
+# Local uploads (folder created at runtime)
+uploads/
+npm-debug.log*
+
+# IDE
+.idea
+.vscode
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Prisma
+prisma/migrations/**/migration_lock.toml
