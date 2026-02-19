@@ -45,6 +45,7 @@ export const authOptions: NextAuthOptions = {
             where: { email: credentials.email },
           });
           if (!user || !user.active) return null;
+          if (user.role === "CUSTOMER" && !user.emailVerifiedAt) return null;
           const ok = await bcrypt.compare(credentials.password, user.password);
           if (!ok) return null;
           return {

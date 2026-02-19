@@ -3,48 +3,37 @@ import * as bcrypt from "bcryptjs";
 
 const prisma = new PrismaClient();
 
+const OLD_SEED_EMAILS = [
+  "aya@ayaphotography.com",
+  "team@ayaphotography.com",
+  "customer@example.com",
+];
+
 async function main() {
-  const adminPassword = await bcrypt.hash("Admin123!", 10);
-  const teamPassword = await bcrypt.hash("Team123!", 10);
-  const customerPassword = await bcrypt.hash("Customer123!", 10);
+  // Remove old seed users (ITAdmin is the only bootstrap account; create Aya admin and team from app)
+  for (const email of OLD_SEED_EMAILS) {
+    await prisma.user.deleteMany({ where: { email } });
+  }
 
-  const admin = await prisma.user.upsert({
-    where: { email: "aya@ayaphotography.com" },
+  const itAdminPassword = await bcrypt.hash("ITAdmin123!", 10);
+  const itAdmin = await prisma.user.upsert({
+    where: { email: "itadmin@ayaphotography.com" },
     update: {},
     create: {
-      email: "aya@ayaphotography.com",
-      name: "Aya",
+      email: "itadmin@ayaphotography.com",
+      name: "IT Admin",
       role: Role.ADMIN,
-      password: adminPassword,
-      phone: "+1234567890",
+      password: itAdminPassword,
+      phone: null,
       active: true,
+      emailVerifiedAt: new Date(),
     },
   });
 
-  const teamMember = await prisma.user.upsert({
-    where: { email: "team@ayaphotography.com" },
-    update: {},
-    create: {
-      email: "team@ayaphotography.com",
-      name: "Alex Photographer",
-      role: Role.TEAM,
-      password: teamPassword,
-      phone: "+1234567891",
-      active: true,
-    },
-  });
-
-  const customer = await prisma.user.upsert({
-    where: { email: "customer@example.com" },
-    update: {},
-    create: {
-      email: "customer@example.com",
-      name: "Jane Doe",
-      role: Role.CUSTOMER,
-      password: customerPassword,
-      phone: "+1234567892",
-      active: true,
-    },
+  // Backfill: any existing users without emailVerifiedAt can still log in
+  await prisma.user.updateMany({
+    where: { emailVerifiedAt: null },
+    data: { emailVerifiedAt: new Date() },
   });
 
   const pkgBasic = {
@@ -77,7 +66,6 @@ async function main() {
     create: { id: "pkg-wedding", ...pkgWedding },
   });
 
-  // Ensure any package with euro or non-rendering symbol is updated to "SAR" (reliable in all fonts)
   const packages = await prisma.package.findMany({ select: { id: true, priceDisplay: true } });
   for (const pkg of packages) {
     const needsUpdate = pkg.priceDisplay.includes("€") || pkg.priceDisplay.includes("\u20C1");
@@ -91,7 +79,8 @@ async function main() {
     }
   }
 
-  console.log("Seeded:", { admin: admin.email, teamMember: teamMember.email, customer: customer.email });
+  console.log("Seeded: ITAdmin", itAdmin.email);
+  console.log("Use ITAdmin to log in, then create the Aya admin and team accounts from Admin → Team.");
 }
 
 main()

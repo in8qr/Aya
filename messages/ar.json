@@ -151,7 +151,17 @@
     "privacyConsentBefore": "لقد قرأت ",
     "privacyPolicyLink": "سياسة الخصوصية",
     "privacyConsentAfter": " وأوافق على معالجة بياناتي الشخصية كما هو موضح.",
-    "privacyConsentRequired": "يجب الموافقة على سياسة الخصوصية للتسجيل."
+    "privacyConsentRequired": "يجب الموافقة على سياسة الخصوصية للتسجيل.",
+    "verifyEmail": "تحقق من بريدك الإلكتروني",
+    "verifyEmailDescription": "أرسلنا رمزاً مكوّناً من 6 أرقام إلى بريدك. أدخله أدناه.",
+    "verificationCode": "رمز التحقق",
+    "verify": "تحقق",
+    "verifying": "جاري التحقق…",
+    "checkYourEmail": "تحقق من بريدك الإلكتروني",
+    "resendCode": "إعادة إرسال الرمز",
+    "resendCodeSent": "تم إرسال الرمز. تحقق من بريدك.",
+    "emailNotVerified": "يرجى التحقق من بريدك أولاً. راجع صندوق الوارد للرمز.",
+    "invalidOrExpiredCode": "رمز غير صالح أو منتهي. يمكنك طلب رمز جديد أدناه."
   },
   "admin": {
     "calendar": "التقويم",

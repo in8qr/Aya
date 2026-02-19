@@ -31,20 +31,33 @@ enum AttachmentType {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  role      Role
-  name      String
-  email     String   @unique
-  phone     String?
-  password  String
-  active    Boolean  @default(true)
-  createdAt DateTime @default(now())
+  id             String    @id @default(uuid())
+  role           Role
+  name           String
+  email          String    @unique
+  phone          String?
+  password       String
+  active         Boolean   @default(true)
+  emailVerifiedAt DateTime? // null until user verifies email via OTP
+  createdAt      DateTime  @default(now())
 
   // Relations
   customerBookings   Booking[]  @relation("CustomerBookings")
   assignedBookings  Booking[]  @relation("AssignedBookings")
   teamUnavailables  TeamUnavailable[]
   uploadedAttachments Attachment[] @relation("UploadedAttachments")
+}
+
+// OTP for email verification (new registrations). Admin can use Gmail or any SMTP via env.
+model EmailVerificationOtp {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  otpHash   String   // bcrypt hash of 6-digit OTP
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([email])
+  @@index([expiresAt])
 }
 
 model Package {

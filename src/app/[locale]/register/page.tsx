@@ -40,7 +40,8 @@ export default function RegisterPage() {
       setError(data.error ?? t("registrationFailed"));
       return;
     }
-    router.push("/login?registered=1");
+    const emailForVerify = (data.email ?? email) || "";
+    router.push(emailForVerify ? `/verify-email?email=${encodeURIComponent(emailForVerify)}` : "/verify-email");
   }
 
   return (

@@ -3,6 +3,8 @@ import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 import * as bcrypt from "bcryptjs";
 import { logError } from "@/lib/logger";
+import { sendVerificationOtpEmail, OTP_EXPIRY_MINUTES } from "@/lib/email-verification";
+import { randomInt } from "crypto";
 
 const bodySchema = z.object({
   name: z.string().min(1),
@@ -16,6 +18,10 @@ function firstValidationError(parsed: z.SafeParseError<unknown>): string {
   const field = flat.fieldErrors as Record<string, string[] | undefined>;
   const first = field?.name?.[0] ?? field?.email?.[0] ?? field?.password?.[0] ?? field?.phone?.[0];
   return first ?? "Invalid request. Check name, email and password.";
+}
+
+function generateOtp(): string {
+  return String(randomInt(0, 1_000_000)).padStart(6, "0");
 }
 
 export async function POST(request: NextRequest) {
@@ -48,10 +54,32 @@ export async function POST(request: NextRequest) {
         password: hashed,
         role: "CUSTOMER",
         active: true,
+        emailVerifiedAt: null,
       },
     });
 
-    return NextResponse.json({ success: true });
+    const otp = generateOtp();
+    const otpHash = await bcrypt.hash(otp, 10);
+    const expiresAt = new Date(Date.now() + OTP_EXPIRY_MINUTES * 60 * 1000);
+    await prisma.emailVerificationOtp.upsert({
+      where: { email: parsed.data.email },
+      create: { email: parsed.data.email, otpHash, expiresAt },
+      update: { otpHash, expiresAt },
+    });
+
+    const sent = await sendVerificationOtpEmail(parsed.data.email, otp);
+    if (!sent) {
+      return NextResponse.json(
+        { error: "Account created but we couldn't send the verification email. Check server SMTP configuration or contact support." },
+        { status: 503 }
+      );
+    }
+
+    return NextResponse.json({
+      success: true,
+      message: "Check your email for the verification code.",
+      email: parsed.data.email,
+    });
   } catch (e) {
     logError("POST /api/auth/register failed", e);
     return NextResponse.json(

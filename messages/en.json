@@ -151,7 +151,17 @@
     "privacyConsentBefore": "I have read the ",
     "privacyPolicyLink": "Privacy Policy",
     "privacyConsentAfter": " and agree to the processing of my personal data as described.",
-    "privacyConsentRequired": "You must agree to the Privacy Policy to register."
+    "privacyConsentRequired": "You must agree to the Privacy Policy to register.",
+    "verifyEmail": "Verify your email",
+    "verifyEmailDescription": "We sent a 6-digit code to your email. Enter it below.",
+    "verificationCode": "Verification code",
+    "verify": "Verify",
+    "verifying": "Verifying…",
+    "checkYourEmail": "Check your email",
+    "resendCode": "Resend code",
+    "resendCodeSent": "Code sent. Check your email.",
+    "emailNotVerified": "Please verify your email first. Check your inbox for the code.",
+    "invalidOrExpiredCode": "Invalid or expired code. You can request a new one below."
   },
   "admin": {
     "calendar": "Calendar",

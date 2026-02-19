@@ -88,6 +88,13 @@ function LoginForm() {
             {t("register")}
           </Link>
         </p>
+        <p className="mt-2 text-center text-sm text-muted-foreground">
+          <Link href="/verify-email" className="text-primary hover:underline">
+            {t("verifyEmail")}
+          </Link>
+          {" · "}
+          {t("checkYourEmail")}
+        </p>
       </CardContent>
     </Card>
   );
