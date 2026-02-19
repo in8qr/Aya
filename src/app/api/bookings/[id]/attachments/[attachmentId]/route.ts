@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { getReceiptSignedUrl } from "@/lib/s3";
+import { getReceiptSignedUrl, isS3Configured } from "@/lib/s3";
 
 export async function GET(
   _request: NextRequest,
@@ -21,7 +21,13 @@ export async function GET(
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 
-  const url = await getReceiptSignedUrl(attachment.fileUrl);
+  let url: string;
+  if (isS3Configured()) {
+    url = await getReceiptSignedUrl(attachment.fileUrl);
+  } else {
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+    url = `${baseUrl}/api/storage/receipts/${encodeURIComponent(attachment.fileUrl)}`;
+  }
   return NextResponse.json({ url });
 }
 
