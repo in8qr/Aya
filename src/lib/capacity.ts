@@ -78,7 +78,9 @@ export async function getTeamCapacityForDay(day: Date): Promise<number> {
   });
   const unavailableCount = unavailableTeamIds.length;
 
-  return Math.max(0, activeTeamCount - unavailableCount);
+  const capacity = Math.max(0, activeTeamCount - unavailableCount);
+  // When no team members exist yet, allow at least 1 booking request so admin can assign later
+  return capacity === 0 ? 1 : capacity;
 }
 
 /**
