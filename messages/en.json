@@ -16,7 +16,9 @@
     "edit": "Edit",
     "view": "View",
     "hour": "hr",
-    "min": "min"
+    "min": "min",
+    "active": "Active",
+    "inactive": "Inactive"
   },
   "nav": {
     "portfolio": "Portfolio",
@@ -176,6 +178,15 @@
     "capacityOverridesDescription": "Override how many confirmed bookings are allowed on a specific day.",
     "teamUnavailability": "Team unavailability",
     "teamUnavailabilityDescription": "Mark when a team member is unavailable (reduces capacity for that period)."
+  },
+  "adminTeam": {
+    "addUser": "Add user",
+    "role": "Role",
+    "roleAdmin": "Admin",
+    "roleTeam": "Team member",
+    "adminAdded": "Admin added",
+    "teamMemberAdded": "Team member added",
+    "newPasswordOptional": "New password (leave blank to keep)"
   },
   "adminPackages": {
     "addPackage": "Add package",

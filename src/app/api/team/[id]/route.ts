@@ -11,6 +11,7 @@ const updateBody = z.object({
   phone: z.string().optional().nullable(),
   password: z.string().min(8).optional(),
   active: z.boolean().optional(),
+  role: z.enum(["ADMIN", "TEAM"]).optional(),
 });
 
 export async function PATCH(
@@ -54,6 +55,7 @@ export async function PATCH(
       email: true,
       phone: true,
       active: true,
+      role: true,
       createdAt: true,
     },
   });

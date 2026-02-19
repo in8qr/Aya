@@ -4,15 +4,20 @@ import { Suspense, useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { useRouter as useLocaleRouter } from "@/i18n/navigation";
 import { Link } from "@/i18n/navigation";
+import { useLocale } from "next-intl";
+import { signIn, getSession } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useTranslations } from "next-intl";
 
+const PENDING_PASSWORD_KEY = "aya_register_password";
+
 function VerifyEmailForm() {
   const t = useTranslations("auth");
   const router = useLocaleRouter();
+  const locale = useLocale();
   const searchParams = useSearchParams();
   const emailFromQuery = searchParams.get("email") ?? "";
 
@@ -37,11 +42,35 @@ function VerifyEmailForm() {
       body: JSON.stringify({ email, otp }),
     });
     const data = await res.json().catch(() => ({}));
-    setLoading(false);
     if (!res.ok) {
+      setLoading(false);
       setError(data.error ?? t("invalidOrExpiredCode"));
       return;
     }
+    let pendingPassword: string | null = null;
+    try {
+      pendingPassword = sessionStorage.getItem(PENDING_PASSWORD_KEY);
+      if (pendingPassword) sessionStorage.removeItem(PENDING_PASSWORD_KEY);
+    } catch {
+      // ignore
+    }
+    if (pendingPassword) {
+      const signInResult = await signIn("credentials", {
+        email,
+        password: pendingPassword,
+        redirect: false,
+      });
+      setLoading(false);
+      if (signInResult?.ok) {
+        const session = await getSession();
+        const role = session?.user?.role;
+        const base = `/${locale}`;
+        const target = role === "ADMIN" ? `${base}/admin` : role === "TEAM" ? `${base}/team` : base;
+        window.location.href = target;
+        return;
+      }
+    }
+    setLoading(false);
     router.push("/login?verified=1");
   }
 

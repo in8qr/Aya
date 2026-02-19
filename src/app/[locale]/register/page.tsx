@@ -41,6 +41,11 @@ export default function RegisterPage() {
       return;
     }
     const emailForVerify = (data.email ?? email) || "";
+    try {
+      sessionStorage.setItem("aya_register_password", password);
+    } catch {
+      // ignore if sessionStorage unavailable
+    }
     router.push(emailForVerify ? `/verify-email?email=${encodeURIComponent(emailForVerify)}` : "/verify-email");
   }
 

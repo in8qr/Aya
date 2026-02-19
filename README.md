@@ -18,7 +18,7 @@ Full-stack booking and portfolio site for a photography business. Bookings are r
 cp .env.example .env
 ```
 
-Edit `.env`:
+Edit `.env`. **Step-by-step guide:** see [docs/ENV-SETUP.md](docs/ENV-SETUP.md).
 
 - `DATABASE_URL` — PostgreSQL connection string
 - `NEXTAUTH_URL` — app URL (e.g. `http://localhost:3000` or your domain)

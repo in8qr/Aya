@@ -16,7 +16,9 @@
     "edit": "تعديل",
     "view": "عرض",
     "hour": "س",
-    "min": "د"
+    "min": "د",
+    "active": "نشط",
+    "inactive": "غير نشط"
   },
   "nav": {
     "portfolio": "معرض الأعمال",
@@ -176,6 +178,15 @@
     "capacityOverridesDescription": "تحديد عدد الحجوزات المؤكدة المسموح بها في يوم معين.",
     "teamUnavailability": "عدم توفر الفريق",
     "teamUnavailabilityDescription": "حدد فترات عدم توفر أحد أعضاء الفريق (تقلل السعة في تلك الفترة)."
+  },
+  "adminTeam": {
+    "addUser": "إضافة مستخدم",
+    "role": "الدور",
+    "roleAdmin": "مدير",
+    "roleTeam": "عضو فريق",
+    "adminAdded": "تمت إضافة المدير",
+    "teamMemberAdded": "تمت إضافة عضو الفريق",
+    "newPasswordOptional": "كلمة مرور جديدة (اتركها فارغة للإبقاء على الحالية)"
   },
   "adminPackages": {
     "addPackage": "إضافة باقة",

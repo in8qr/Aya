@@ -10,6 +10,7 @@ const createBody = z.object({
   email: z.string().email(),
   phone: z.string().optional(),
   password: z.string().min(8),
+  role: z.enum(["ADMIN", "TEAM"]),
 });
 
 export async function GET() {
@@ -19,16 +20,17 @@ export async function GET() {
   }
 
   const team = await prisma.user.findMany({
-    where: { role: "TEAM" },
+    where: { role: { in: ["ADMIN", "TEAM"] } },
     select: {
       id: true,
       name: true,
       email: true,
       phone: true,
       active: true,
+      role: true,
       createdAt: true,
     },
-    orderBy: { name: "asc" },
+    orderBy: [{ role: "asc" }, { name: "asc" }],
   });
   return NextResponse.json(team);
 }
@@ -62,8 +64,9 @@ export async function POST(request: NextRequest) {
       email: parsed.data.email,
       phone: parsed.data.phone ?? null,
       password: hashed,
-      role: "TEAM",
+      role: parsed.data.role,
       active: true,
+      emailVerifiedAt: new Date(),
     },
     select: {
       id: true,
@@ -71,6 +74,7 @@ export async function POST(request: NextRequest) {
       email: true,
       phone: true,
       active: true,
+      role: true,
       createdAt: true,
     },
   });
