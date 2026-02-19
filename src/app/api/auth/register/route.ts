@@ -11,6 +11,7 @@ const bodySchema = z.object({
   email: z.string().email(),
   phone: z.string().optional(),
   password: z.string().min(8),
+  locale: z.enum(["en", "ar"]).optional(),
 });
 
 function firstValidationError(parsed: z.SafeParseError<unknown>): string {
@@ -45,6 +46,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const locale = parsed.data.locale === "ar" ? "ar" : "en";
     const hashed = await bcrypt.hash(parsed.data.password, 10);
     await prisma.user.create({
       data: {
@@ -55,6 +57,7 @@ export async function POST(request: NextRequest) {
         role: "CUSTOMER",
         active: true,
         emailVerifiedAt: null,
+        preferredLocale: locale,
       },
     });
 
@@ -67,7 +70,7 @@ export async function POST(request: NextRequest) {
       update: { otpHash, expiresAt },
     });
 
-    const sent = await sendVerificationOtpEmail(parsed.data.email, otp);
+    const sent = await sendVerificationOtpEmail(parsed.data.email, otp, locale);
     if (!sent) {
       return NextResponse.json(
         { error: "Account created but we couldn't send the verification email. Check server SMTP configuration or contact support." },

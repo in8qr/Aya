@@ -39,6 +39,7 @@ model User {
   password       String
   active         Boolean   @default(true)
   emailVerifiedAt DateTime? // null until user verifies email via OTP
+  preferredLocale String?   @default("en") // en | ar for customer emails
   createdAt      DateTime  @default(now())
 
   // Relations

@@ -40,7 +40,8 @@ export async function POST(request: NextRequest) {
       update: { otpHash, expiresAt },
     });
 
-    const sent = await sendVerificationOtpEmail(parsed.data.email, otp);
+    const locale = user.preferredLocale === "ar" ? "ar" : "en";
+    const sent = await sendVerificationOtpEmail(parsed.data.email, otp, locale);
     if (!sent) {
       return NextResponse.json(
         { error: "Could not send verification email. Check server configuration." },

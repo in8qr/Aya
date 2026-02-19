@@ -1,5 +1,7 @@
 import nodemailer from "nodemailer";
 import { logError } from "@/lib/logger";
+import { wrapEmailContent, emailStyles } from "@/lib/email-template";
+import { getEmailCopy, type EmailLocale } from "@/lib/email-i18n";
 
 /**
  * Sends the verification OTP email. Uses SMTP (e.g. Gmail) so the admin can
@@ -31,27 +33,32 @@ export function getVerificationFrom(): string {
   );
 }
 
-export async function sendVerificationOtpEmail(to: string, otp: string): Promise<boolean> {
+export async function sendVerificationOtpEmail(
+  to: string,
+  otp: string,
+  locale: EmailLocale = "en"
+): Promise<boolean> {
   const transporter = getTransporter();
   if (!transporter) {
     logError("Email verification: SMTP not configured (SMTP_HOST, SMTP_USER, SMTP_PASSWORD)");
     return false;
   }
   const from = getVerificationFrom();
-  const appName = "Aya Eye";
+  const t = getEmailCopy(locale).otp;
+  const content = `
+    <p style="${emailStyles.body}">${t.body}</p>
+    <p style="${emailStyles.body}"><strong style="${emailStyles.strong}">${otp}</strong></p>
+    <p style="${emailStyles.subtitle}">${t.expiry}</p>
+    <p style="${emailStyles.body}">If you didn't request this, you can ignore this email.</p>
+  `;
+  const html = wrapEmailContent(content, { title: t.title, dir: locale === "ar" ? "rtl" : "ltr" });
   try {
     await transporter.sendMail({
       from,
       to,
-      subject: `${appName} – Your verification code`,
-      text: `Your verification code is: ${otp}. It expires in ${OTP_EXPIRY_MINUTES} minutes. If you didn't request this, you can ignore this email.`,
-      html: `
-        <h2>Verify your email</h2>
-        <p>Your verification code is: <strong>${otp}</strong></p>
-        <p>It expires in ${OTP_EXPIRY_MINUTES} minutes.</p>
-        <p>If you didn't request this, you can ignore this email.</p>
-        <p>— ${appName}</p>
-      `,
+      subject: t.subject,
+      text: `${t.body} ${otp}. ${t.expiry}`,
+      html,
     });
     return true;
   } catch (e) {
@@ -67,12 +74,15 @@ export function isSmtpConfigured(): boolean {
   return getTransporter() !== null;
 }
 
+export type EmailAttachment = { filename: string; content: string | Buffer };
+
 /** Single sender for all app email (OTP + team notifications). Uses EMAIL_FROM / EMAIL_VERIFICATION_FROM. */
 export async function sendMail(params: {
   to: string;
   subject: string;
   html: string;
   text?: string;
+  attachments?: EmailAttachment[];
 }): Promise<boolean> {
   const transporter = getTransporter();
   if (!transporter) return false;
@@ -84,6 +94,10 @@ export async function sendMail(params: {
       subject: params.subject,
       html: params.html,
       text: params.text,
+      attachments: params.attachments?.map((a) => ({
+        filename: a.filename,
+        content: typeof a.content === "string" ? a.content : a.content,
+      })),
     });
     return true;
   } catch (e) {
