@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BookingDetailsModal } from "@/components/admin/booking-details-modal";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useTranslations } from "next-intl";
+import { fetchJson } from "@/lib/fetch-safe";
 
 type Booking = {
   id: string;
@@ -26,9 +27,10 @@ export default function AdminBookingsPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("/api/bookings")
-      .then((r) => r.json())
-      .then(setBookings)
+    fetchJson<Booking[]>("/api/bookings")
+      .then((res) => {
+        if (res.ok && Array.isArray(res.data)) setBookings(res.data);
+      })
       .finally(() => setLoading(false));
   }, []);
 

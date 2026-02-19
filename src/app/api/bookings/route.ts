@@ -12,6 +12,8 @@ const createBody = z.object({
   durationMinutes: z.number().int().min(1),
   location: z.string().optional(),
   notes: z.string().optional(),
+  locale: z.enum(["en", "ar"]).optional(),
+  customerId: z.string().uuid().optional(),
 });
 
 export async function GET() {
@@ -62,7 +64,12 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const body = await request.json();
+    let body: unknown;
+    try {
+      body = await request.json();
+    } catch {
+      return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
+    }
     const parsed = createBody.safeParse(body);
     if (!parsed.success) {
       const first = parsed.error.flatten().fieldErrors;
@@ -70,7 +77,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: msg }, { status: 400 });
     }
 
-    const { packageId, startAt: startAtStr, durationMinutes, location, notes } = parsed.data;
+    const { packageId, startAt: startAtStr, durationMinutes, location, notes, locale } = parsed.data;
     const startAt = new Date(startAtStr);
     if (Number.isNaN(startAt.getTime())) {
       return NextResponse.json({ error: "Invalid date or time." }, { status: 400 });
@@ -89,14 +96,20 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const customerId = session.user.role === "CUSTOMER" ? session.user.id : body.customerId;
-    if (session.user.role === "ADMIN" && body.customerId) {
-      const customer = await prisma.user.findFirst({ where: { id: body.customerId, role: "CUSTOMER" } });
+    const customerId =
+      session.user.role === "CUSTOMER"
+        ? session.user.id
+        : parsed.data.customerId ?? null;
+    if (session.user.role === "ADMIN" && parsed.data.customerId) {
+      const customer = await prisma.user.findFirst({
+        where: { id: parsed.data.customerId, role: "CUSTOMER" },
+      });
       if (!customer) {
         return NextResponse.json({ error: "Customer not found" }, { status: 400 });
       }
     }
 
+    const customerLocale = locale === "ar" ? "ar" : "en";
     const booking = await prisma.booking.create({
       data: {
         customerId: customerId ?? session.user.id,
@@ -105,6 +118,7 @@ export async function POST(request: NextRequest) {
         durationMinutes,
         location: location ?? null,
         notes: notes ?? null,
+        customerLocale,
         status: "PENDING_REVIEW",
       },
       include: {

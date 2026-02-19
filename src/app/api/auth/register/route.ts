@@ -3,8 +3,8 @@ import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 import * as bcrypt from "bcryptjs";
 import { logError } from "@/lib/logger";
-import { sendVerificationOtpEmail, OTP_EXPIRY_MINUTES } from "@/lib/email-verification";
-import { randomInt } from "crypto";
+import { sendVerificationOtpEmail, OTP_EXPIRY_MINUTES, generateOtp } from "@/lib/email-verification";
+import { getClientKey, isRateLimited } from "@/lib/rate-limit";
 
 const bodySchema = z.object({
   name: z.string().min(1),
@@ -21,12 +21,18 @@ function firstValidationError(parsed: z.SafeParseError<unknown>): string {
   return first ?? "Invalid request. Check name, email and password.";
 }
 
-function generateOtp(): string {
-  return String(randomInt(0, 1_000_000)).padStart(6, "0");
-}
+const REGISTER_RATE_LIMIT = 5;
+const REGISTER_WINDOW_MS = 60 * 1000;
 
 export async function POST(request: NextRequest) {
   try {
+    const key = getClientKey(request);
+    if (isRateLimited(`register:${key}`, REGISTER_RATE_LIMIT, REGISTER_WINDOW_MS)) {
+      return NextResponse.json(
+        { error: "Too many attempts. Please try again later." },
+        { status: 429 }
+      );
+    }
     const body = await request.json().catch(() => ({}));
     const parsed = bodySchema.safeParse(body);
     if (!parsed.success) {
