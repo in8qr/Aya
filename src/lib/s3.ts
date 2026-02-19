@@ -10,6 +10,16 @@ const endpoint = process.env.S3_ENDPOINT;
 const region = process.env.S3_REGION ?? "us-east-1";
 const forcePathStyle = process.env.S3_FORCE_PATH_STYLE === "true";
 
+/** True when S3/MinIO is configured (endpoint + credentials). When false, use local receipt storage. */
+export function isS3Configured(): boolean {
+  return !!(
+    endpoint &&
+    forcePathStyle &&
+    process.env.S3_ACCESS_KEY_ID &&
+    process.env.S3_SECRET_ACCESS_KEY
+  );
+}
+
 const s3 =
   endpoint && forcePathStyle
     ? new S3Client({

@@ -149,7 +149,9 @@ EMAIL_FROM="Aya Eye <your@gmail.com>"
 
 ## 5. S3 (optional – MinIO or AWS S3)
 
-**What it is:** Object storage for portfolio images (public) and receipt attachments (private). Only needed if you use uploads.
+**What it is:** Object storage for portfolio images (public) and receipt attachments (private).
+
+**If you do not set any S3 variables:** Portfolio images use local storage (`uploads/portfolio/`). Receipt attachments use local storage (`uploads/receipts/`). You do **not** need MinIO or AWS; the app will not try to connect to port 9000, so you will not see `ECONNREFUSED 127.0.0.1:9000`. Set S3 only when you want to use MinIO or AWS for receipts.
 
 **Option A – MinIO (e.g. on same server or Docker)**
 
@@ -187,7 +189,7 @@ S3_FORCE_PATH_STYLE="false"
 
 (You can leave `S3_ENDPOINT` unset for AWS and the SDK will use the default; the app may still read it.)
 
-**If you don’t use uploads:** you can leave S3 vars unset or commented out; the app may show errors only when someone tries to upload.
+**If you leave S3 unset:** Receipts are stored under `uploads/receipts/` and served via the app (admin-only). No MinIO or S3 required.
 
 ---
 

@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { uploadReceiptFile } from "@/lib/s3";
+import { uploadReceiptFile, isS3Configured } from "@/lib/s3";
+import { saveReceiptFile } from "@/lib/local-storage";
 
 export async function GET(
   _request: NextRequest,
@@ -61,7 +62,11 @@ export async function POST(
   const ext = file.name.split(".").pop() ?? "pdf";
   const key = `receipts/${id}/${Date.now()}-${name.replace(/\W/g, "_")}.${ext}`;
 
-  await uploadReceiptFile(key, buffer, file.type || "application/octet-stream");
+  if (isS3Configured()) {
+    await uploadReceiptFile(key, buffer, file.type || "application/octet-stream");
+  } else {
+    saveReceiptFile(key, buffer);
+  }
 
   const attachment = await prisma.attachment.create({
     data: {
