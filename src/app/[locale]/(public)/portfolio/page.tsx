@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import { fetchJson } from "@/lib/fetch-safe";
+import { AnimateInView } from "@/components/ui/animate-in-view";
 
 type PortfolioItem = {
   id: string;
@@ -43,7 +44,9 @@ export default function PortfolioPage() {
 
   return (
     <div className="container mx-auto px-4 py-16">
-      <h1 className="font-display text-4xl font-medium tracking-tight mb-8">{t("title")}</h1>
+      <AnimateInView animation="fade-in-up">
+        <h1 className="font-display text-4xl font-medium tracking-tight mb-8">{t("title")}</h1>
+      </AnimateInView>
       {categories.length > 0 && (
         <div className="flex gap-2 mb-8 flex-wrap">
           <button
@@ -81,8 +84,9 @@ export default function PortfolioPage() {
         <p className="text-muted-foreground">{t("noPhotos")}</p>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-          {items.map((item) => (
-            <div key={item.id} className="rounded-lg overflow-hidden border bg-card">
+          {items.map((item, i) => (
+            <AnimateInView key={item.id} animation="fade-in-up" delay={i * 60}>
+              <div className="rounded-lg overflow-hidden border bg-card transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg">
               <div className="aspect-[4/3] relative">
                 <Image
                   src={item.imageUrl}
@@ -99,6 +103,7 @@ export default function PortfolioPage() {
                 )}
               </div>
             </div>
+            </AnimateInView>
           ))}
         </div>
       )}

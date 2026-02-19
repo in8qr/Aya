@@ -54,6 +54,21 @@
   * {
     @apply border-border;
   }
+  html {
+    scroll-behavior: smooth;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
   body {
     @apply bg-background text-foreground;
   }
@@ -83,6 +98,26 @@
   input[type="time"]::-webkit-datetime-edit-fields-wrapper,
   input[type="datetime-local"]::-webkit-datetime-edit-fields-wrapper {
     @apply text-foreground;
+  }
+
+  /* Card hover: subtle lift and border */
+  [data-card-hover] {
+    @apply transition-all duration-300 ease-out;
+  }
+  [data-card-hover]:hover {
+    @apply -translate-y-0.5;
+  }
+
+  /* Nav link underline on hover (optional) */
+  [data-nav-link] {
+    @apply relative transition-colors duration-200;
+  }
+  [data-nav-link]::after {
+    content: "";
+    @apply absolute left-0 right-0 bottom-0 h-px bg-current opacity-0 scale-x-0 origin-left transition-all duration-200;
+  }
+  [data-nav-link]:hover::after {
+    @apply opacity-100 scale-x-100;
   }
 }
 

@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { useTranslations } from "next-intl";
 import { fetchJson } from "@/lib/fetch-safe";
+import { AnimateInView } from "@/components/ui/animate-in-view";
 
 type Package = {
   id: string;
@@ -40,8 +41,10 @@ export default function PackagesPage() {
 
   return (
     <div className="container mx-auto px-4 py-16">
-      <h1 className="font-display text-4xl font-medium tracking-tight mb-2">{t("title")}</h1>
-      <p className="text-muted-foreground mb-10 tracking-wide">{t("noOnlinePayments")}</p>
+      <AnimateInView animation="fade-in-up">
+        <h1 className="font-display text-4xl font-medium tracking-tight mb-2">{t("title")}</h1>
+        <p className="text-muted-foreground mb-10 tracking-wide">{t("noOnlinePayments")}</p>
+      </AnimateInView>
       {loading ? (
         <p className="text-muted-foreground">{t("loading")}</p>
       ) : error ? (
@@ -54,8 +57,9 @@ export default function PackagesPage() {
         <p className="text-muted-foreground">{t("noPackages")}</p>
       ) : (
         <div className="grid gap-6 md:grid-cols-2">
-          {packages.map((pkg) => (
-            <Card key={pkg.id} className="border-border bg-card">
+          {packages.map((pkg, i) => (
+            <AnimateInView key={pkg.id} animation="fade-in-up" delay={i * 80}>
+              <Card className="border-border bg-card transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg">
               <CardHeader>
                 <CardTitle>{pkg.name}</CardTitle>
                 <CardDescription>
@@ -68,10 +72,11 @@ export default function PackagesPage() {
                   <p className="text-sm text-muted-foreground mb-4">{pkg.deliverables}</p>
                 )}
                 <Link href={`/booking?packageId=${pkg.id}`}>
-                  <Button>{t("requestBooking")}</Button>
+                  <Button className="transition-transform duration-200 hover:scale-[1.02] active:scale-[0.98]">{t("requestBooking")}</Button>
                 </Link>
               </CardContent>
             </Card>
+            </AnimateInView>
           ))}
         </div>
       )}

@@ -100,17 +100,17 @@ export function PublicHeader() {
           {tCommon("brand")}
         </Link>
         {/* Desktop nav */}
-        <nav className="hidden md:flex gap-6 md:gap-8 items-center text-sm tracking-wide uppercase text-muted-foreground hover:text-foreground">
-          <Link href="/portfolio" className="transition-colors hover:text-foreground">
+        <nav className="hidden md:flex gap-6 md:gap-8 items-center text-sm tracking-wide uppercase text-muted-foreground">
+          <Link href="/portfolio" className="relative py-1 text-muted-foreground hover:text-foreground" data-nav-link>
             {t("portfolio")}
           </Link>
-          <Link href="/packages" className="transition-colors hover:text-foreground">
+          <Link href="/packages" className="relative py-1 text-muted-foreground hover:text-foreground" data-nav-link>
             {t("packages")}
           </Link>
-          <Link href="/about" className="transition-colors hover:text-foreground">
+          <Link href="/about" className="relative py-1 text-muted-foreground hover:text-foreground" data-nav-link>
             {t("about")}
           </Link>
-          <Link href="/contact" className="transition-colors hover:text-foreground">
+          <Link href="/contact" className="relative py-1 text-muted-foreground hover:text-foreground" data-nav-link>
             {t("contact")}
           </Link>
           {status === "loading" ? (
@@ -183,7 +183,7 @@ export function PublicHeader() {
       </div>
       <Dialog open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
         <DialogContent
-          className="max-w-[min(90vw,20rem)] border-border bg-card p-4 sm:p-6 top-[4.5rem] translate-y-0"
+          className="max-w-[min(90vw,20rem)] border-border bg-card p-4 sm:p-6 top-[4.5rem] translate-y-0 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:slide-in-from-right-5 data-[state=open]:duration-200"
           showClose={true}
         >
           <nav className="flex flex-col gap-1 text-sm tracking-wide uppercase text-muted-foreground">
