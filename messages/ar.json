@@ -193,7 +193,8 @@
   },
   "team": {
     "myBookings": "حجوزاتي",
-    "assignedBookings": "الحجوزات المعينة لي"
+    "assignedBookings": "الحجوزات المعينة لي",
+    "addToCalendar": "إضافة إلى تقويم الجوال"
   },
   "adminBooking": {
     "assign": "تعيين",

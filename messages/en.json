@@ -193,7 +193,8 @@
   },
   "team": {
     "myBookings": "My bookings",
-    "assignedBookings": "Assigned bookings"
+    "assignedBookings": "Assigned bookings",
+    "addToCalendar": "Add to phone calendar"
   },
   "adminBooking": {
     "assign": "Assign",

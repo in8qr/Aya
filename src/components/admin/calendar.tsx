@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
@@ -15,9 +15,19 @@ const TEAM_COLORS = [
   "#f43f5e", "#14b8a6", "#0d9488",
 ];
 
+const MOBILE_BREAKPOINT = 768;
+
 export function AdminCalendar({ teamOnly }: { teamOnly: boolean }) {
   const [events, setEvents] = useState<Array<{ id: string; title: string; start: string; end: string; extendedProps?: Record<string, unknown> }>>([]);
   const [selectedBookingId, setSelectedBookingId] = useState<string | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const check = () => setIsMobile(typeof window !== "undefined" && window.innerWidth < MOBILE_BREAKPOINT);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
 
   const fetchEvents = useCallback(
     async (arg: DatesSetArg) => {
@@ -53,19 +63,23 @@ export function AdminCalendar({ teamOnly }: { teamOnly: boolean }) {
 
   return (
     <>
-      <FullCalendar
-        plugins={[dayGridPlugin, timeGridPlugin, listPlugin, interactionPlugin]}
-        initialView="dayGridMonth"
-        headerToolbar={{
-          left: "prev,next today",
-          center: "title",
-          right: "dayGridMonth,timeGridWeek,timeGridDay,listWeek",
-        }}
-        events={events}
-        datesSet={fetchEvents}
-        eventClick={handleEventClick}
-        height="auto"
-      />
+      <div className="calendar-wrap overflow-x-auto -mx-2 sm:mx-0">
+        <FullCalendar
+          plugins={[dayGridPlugin, timeGridPlugin, listPlugin, interactionPlugin]}
+          initialView={isMobile ? "listWeek" : "dayGridMonth"}
+          headerToolbar={
+            isMobile
+              ? { left: "prev,next", center: "title", right: "" }
+              : { left: "prev,next today", center: "title", right: "dayGridMonth,timeGridWeek,timeGridDay,listWeek" }
+          }
+          events={events}
+          datesSet={fetchEvents}
+          eventClick={handleEventClick}
+          height="auto"
+          contentHeight={isMobile ? 400 : undefined}
+          key={isMobile ? "mobile" : "desktop"}
+        />
+      </div>
       <Dialog open={!!selectedBookingId} onOpenChange={(open) => !open && setSelectedBookingId(null)}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
