@@ -6,7 +6,7 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-const HERO_IMAGE =
+const DEFAULT_HERO_IMAGE =
   "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=1920&q=80";
 
 const STAGGER_MS = 120;
@@ -17,13 +17,16 @@ export function HeroAnimated({
   subtitle,
   viewPortfolio,
   viewPackages,
+  imageUrl,
 }: {
   tagline: string;
   title: string;
   subtitle: string;
   viewPortfolio: string;
   viewPackages: string;
+  imageUrl?: string | null;
 }) {
+  const src = imageUrl?.trim() || DEFAULT_HERO_IMAGE;
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -35,7 +38,7 @@ export function HeroAnimated({
     <section className="relative min-h-[85vh] flex items-center justify-center overflow-hidden">
       <div className="absolute inset-0 z-0">
         <Image
-          src={HERO_IMAGE}
+          src={src}
           alt=""
           fill
           priority

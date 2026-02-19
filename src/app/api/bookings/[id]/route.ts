@@ -149,7 +149,7 @@ export async function PATCH(
         teamMemberName: booking.assignedTeam?.name ?? null,
         teamMemberEmail: booking.assignedTeam?.email ?? null,
         teamMemberPhone: booking.assignedTeam?.phone ?? null,
-        locale: booking.customer.preferredLocale === "ar" ? "ar" : "en",
+        locale: (booking.customerLocale ?? booking.customer.preferredLocale) === "ar" ? "ar" : "en",
       });
     } catch (e) {
       logError("Confirmation email failed", e);
@@ -175,7 +175,7 @@ export async function PATCH(
         packageName: booking.package.name,
         startAt: booking.startAt,
         reason: reason ?? undefined,
-        locale: booking.customer.preferredLocale === "ar" ? "ar" : "en",
+        locale: (booking.customerLocale ?? booking.customer.preferredLocale) === "ar" ? "ar" : "en",
       });
     } catch (e) {
       logError("Rejection email failed", e);

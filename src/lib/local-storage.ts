@@ -40,9 +40,3 @@ export function getPortfolioFileBuffer(filename: string): Buffer | null {
   return fs.readFileSync(filePath);
 }
 
-export function getPortfolioFilePath(filename: string): string | null {
-  const safeName = path.basename(filename).replace(/[^a-zA-Z0-9._-]/g, "_");
-  const filePath = path.join(UPLOAD_DIR, safeName);
-  if (!fs.existsSync(filePath)) return null;
-  return filePath;
-}

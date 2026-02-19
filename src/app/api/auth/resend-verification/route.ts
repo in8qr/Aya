@@ -2,19 +2,25 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 import * as bcrypt from "bcryptjs";
-import { sendVerificationOtpEmail, OTP_EXPIRY_MINUTES } from "@/lib/email-verification";
-import { randomInt } from "crypto";
+import { sendVerificationOtpEmail, OTP_EXPIRY_MINUTES, generateOtp } from "@/lib/email-verification";
+import { getClientKey, isRateLimited } from "@/lib/rate-limit";
 
 const bodySchema = z.object({
   email: z.string().email(),
 });
 
-function generateOtp(): string {
-  return String(randomInt(0, 1_000_000)).padStart(6, "0");
-}
+const RESEND_RATE_LIMIT = 5;
+const RESEND_WINDOW_MS = 60 * 1000;
 
 export async function POST(request: NextRequest) {
   try {
+    const key = getClientKey(request);
+    if (isRateLimited(`resend:${key}`, RESEND_RATE_LIMIT, RESEND_WINDOW_MS)) {
+      return NextResponse.json(
+        { error: "Too many attempts. Please try again later." },
+        { status: 429 }
+      );
+    }
     const body = await request.json().catch(() => ({}));
     const parsed = bodySchema.safeParse(body);
     if (!parsed.success) {

@@ -18,8 +18,8 @@ Then set each group below. Values in quotes go in `.env` as-is (replace placehol
 
 ```bash
 # As postgres superuser (Linux: sudo -u postgres psql, or use a DB admin)
-CREATE USER ms WITH PASSWORD '10901090';
-CREATE DATABASE aya_eye OWNER ms;
+CREATE USER your_db_user WITH PASSWORD 'your_secure_password';
+CREATE DATABASE aya_eye OWNER your_db_user;
 ```
 
 **Step 2 – Build the URL:**
@@ -27,7 +27,7 @@ CREATE DATABASE aya_eye OWNER ms;
 Format:
 
 ```
-postgresql://ms:PASSWORD@HOST:5432/DATABASE
+postgresql://your_db_user:PASSWORD@HOST:5432/DATABASE
 ```
 
 - **USER** = the user you created (e.g. `your_db_user`)
@@ -255,24 +255,35 @@ npm start
 
 ## Deploy from GitHub (server)
 
-After pushing to `main`, on the server:
+After pushing to `main`, on the server (replace `~/apps/aya-eye/aya-eye` with your app directory if different):
+
+**Option A – use the deploy script (recommended):**
 
 ```bash
-cd /path/to/AyaEye
+cd ~/apps/aya-eye/aya-eye
 git fetch origin main
 git reset --hard origin/main
 ./scripts/deploy.sh production
 ```
 
-Or step by step:
+The script uses `prisma migrate deploy` only when `prisma/migrations` has files; otherwise it runs `prisma db push` so the DB schema stays in sync.
+
+**Option B – manual steps:**
 
 ```bash
-cd /path/to/AyaEye
-git pull origin main   # or: git fetch && git reset --hard origin/main
+cd ~/apps/aya-eye/aya-eye
+git fetch origin main
+git reset --hard origin/main
 
 npm ci
 npx prisma generate
-npx prisma migrate deploy   # or, if no migrations: npx prisma db push --accept-data-loss=false
+
+# Schema: use one of these (not both)
+# - If you have migration files in prisma/migrations:
+npx prisma migrate deploy
+# - If you have no migrations (existing DB, schema changes via Prisma):
+npx prisma db push --accept-data-loss=false
+
 npm run build
 pm2 restart ecosystem.config.js
 pm2 save

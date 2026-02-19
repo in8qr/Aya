@@ -34,7 +34,13 @@ export async function DELETE(
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { attachmentId } = await params;
+  const { id: bookingId, attachmentId } = await params;
+  const attachment = await prisma.attachment.findFirst({
+    where: { id: attachmentId, bookingId },
+  });
+  if (!attachment) {
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  }
   await prisma.attachment.delete({ where: { id: attachmentId } });
   return NextResponse.json({ success: true });
 }

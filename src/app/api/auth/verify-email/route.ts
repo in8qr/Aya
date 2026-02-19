@@ -3,14 +3,25 @@ import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 import * as bcrypt from "bcryptjs";
 import { logError } from "@/lib/logger";
+import { getClientKey, isRateLimited } from "@/lib/rate-limit";
 
 const bodySchema = z.object({
   email: z.string().email(),
   otp: z.string().length(6),
 });
 
+const VERIFY_RATE_LIMIT = 10;
+const VERIFY_WINDOW_MS = 60 * 1000;
+
 export async function POST(request: NextRequest) {
   try {
+    const key = getClientKey(request);
+    if (isRateLimited(`verify:${key}`, VERIFY_RATE_LIMIT, VERIFY_WINDOW_MS)) {
+      return NextResponse.json(
+        { error: "Too many attempts. Please try again later." },
+        { status: 429 }
+      );
+    }
     const body = await request.json().catch(() => ({}));
     const parsed = bodySchema.safeParse(body);
     if (!parsed.success) {

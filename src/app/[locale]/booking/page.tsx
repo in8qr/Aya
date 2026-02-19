@@ -11,7 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { fetchJson } from "@/lib/fetch-safe";
 
 type Package = {
@@ -24,6 +24,7 @@ type Package = {
 function BookingContent() {
   const t = useTranslations("booking");
   const tCommon = useTranslations("common");
+  const locale = useLocale();
   const searchParams = useSearchParams();
   const packageIdParam = searchParams.get("packageId");
   const { toast } = useToast();
@@ -89,6 +90,7 @@ function BookingContent() {
         durationMinutes,
         location: location || undefined,
         notes: notes || undefined,
+        locale: locale === "ar" ? "ar" : "en",
       }),
     });
     setLoading(false);

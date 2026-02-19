@@ -1,3 +1,4 @@
+import { randomInt } from "crypto";
 import nodemailer from "nodemailer";
 import { logError } from "@/lib/logger";
 import { wrapEmailContent, emailStyles } from "@/lib/email-template";
@@ -8,6 +9,11 @@ import { getEmailCopy, type EmailLocale } from "@/lib/email-i18n";
  * use any provider via environment variables. From address is configurable.
  */
 const OTP_EXPIRY_MINUTES = 15;
+
+/** Generate a 6-digit OTP. */
+export function generateOtp(): string {
+  return String(randomInt(0, 1_000_000)).padStart(6, "0");
+}
 
 function getTransporter(): nodemailer.Transporter | null {
   const host = process.env.SMTP_HOST;

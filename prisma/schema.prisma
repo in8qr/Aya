@@ -86,6 +86,7 @@ model Booking {
   status         BookingStatus @default(PENDING_REVIEW)
   location       String?
   notes          String?
+  customerLocale String?       // en | ar — app language at booking time (for confirmation/rejection email)
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
 
@@ -93,6 +94,11 @@ model Booking {
   package    Package @relation(fields: [packageId], references: [id], onDelete: Restrict)
   assignedTeam User? @relation("AssignedBookings", fields: [assignedTeamId], references: [id], onDelete: SetNull)
   attachments Attachment[]
+
+  @@index([startAt])
+  @@index([customerId])
+  @@index([assignedTeamId])
+  @@index([status])
 }
 
 model Attachment {
@@ -143,6 +149,13 @@ model CapacityOverride {
 
   @@unique([day])
   @@index([day])
+}
+
+// Key-value site settings (e.g. hero image URL for homepage)
+model SiteSetting {
+  key       String   @id
+  value     String?
+  updatedAt DateTime @updatedAt
 }
 
 // Portfolio: single list of photos with category and tags (no separate Album entity)
