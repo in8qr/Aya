@@ -53,15 +53,17 @@ if [ -d ".next" ]; then
     tar -czf "logs/backup-$(date +%Y%m%d-%H%M%S).tar.gz" .next || warning "Failed to backup .next directory"
 fi
 
-# Pull latest code (if using git)
+# Pull latest code (if using git). Reset to remote branch so local changes (e.g. package-lock.json) never block.
 if [ -d ".git" ]; then
     log "Pulling latest code from repository..."
-    git pull origin main || git pull origin master || warning "Failed to pull latest code"
+    DEPLOY_BRANCH="${DEPLOY_BRANCH:-main}"
+    git fetch origin "$DEPLOY_BRANCH" || error "Failed to fetch from origin"
+    git reset --hard "origin/$DEPLOY_BRANCH" || error "Failed to reset to origin/$DEPLOY_BRANCH"
 fi
 
 # Install dependencies
 log "Installing dependencies..."
-npm ci --production=false || error "Failed to install dependencies"
+npm ci || error "Failed to install dependencies"
 
 # Generate Prisma Client
 log "Generating Prisma Client..."
