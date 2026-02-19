@@ -18,8 +18,8 @@ Then set each group below. Values in quotes go in `.env` as-is (replace placehol
 
 ```bash
 # As postgres superuser (Linux: sudo -u postgres psql, or use a DB admin)
-CREATE USER your_db_user WITH PASSWORD 'your_secure_password';
-CREATE DATABASE aya_eye OWNER your_db_user;
+CREATE USER ms WITH PASSWORD '10901090';
+CREATE DATABASE aya_eye OWNER ms;
 ```
 
 **Step 2 – Build the URL:**
@@ -27,7 +27,7 @@ CREATE DATABASE aya_eye OWNER your_db_user;
 Format:
 
 ```
-postgresql://USER:PASSWORD@HOST:5432/DATABASE
+postgresql://ms:PASSWORD@HOST:5432/DATABASE
 ```
 
 - **USER** = the user you created (e.g. `your_db_user`)
@@ -250,3 +250,32 @@ npm run db:seed
 npm run build
 npm start
 ```
+
+---
+
+## Deploy from GitHub (server)
+
+After pushing to `main`, on the server:
+
+```bash
+cd /path/to/AyaEye
+git fetch origin main
+git reset --hard origin/main
+./scripts/deploy.sh production
+```
+
+Or step by step:
+
+```bash
+cd /path/to/AyaEye
+git pull origin main   # or: git fetch && git reset --hard origin/main
+
+npm ci
+npx prisma generate
+npx prisma migrate deploy   # or, if no migrations: npx prisma db push --accept-data-loss=false
+npm run build
+pm2 restart ecosystem.config.js
+pm2 save
+```
+
+Ensure `.env` on the server has all required variables (see checklist above).
