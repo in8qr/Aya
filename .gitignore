@@ -34,3 +34,18 @@ Thumbs.db
 
 # Prisma
 prisma/migrations/**/migration_lock.toml
+*.db
+*.db-journal
+
+# Testing / coverage
+coverage/
+.nyc_output/
+
+# Turbo / Vercel
+.turbo
+.vercel
+
+# Lockfiles (optional: uncomment if you want to avoid committing)
+# package-lock.json
+# pnpm-lock.yaml
+# yarn.lock

@@ -11,7 +11,7 @@ const CONTENT_TYPES: Record<string, string> = {
 
 export async function GET(
   _request: NextRequest,
-  { params }: { params: Promise<{ key: string[] }> }
+  { params }: { params: Promise<{ key?: string[] }> }
 ) {
   const key = (await params).key?.join("/");
   if (!key) {
