@@ -2,7 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { useTranslations } from "next-intl";
+import { downloadICS } from "@/lib/ics";
+import { CalendarPlus } from "lucide-react";
 
 type Booking = {
   id: string;
@@ -43,12 +46,32 @@ export default function TeamBookingsPage() {
                   {new Date(b.startAt).toLocaleString(undefined, { dateStyle: "full", timeStyle: "short" })} · {b.durationMinutes} {tCommon("min")} · {tBookings(`status.${b.status}` as `status.${string}`) ?? b.status}
                 </p>
               </CardHeader>
-              <CardContent>
+              <CardContent className="space-y-2">
                 <p className="font-medium">Customer: {b.customer.name}</p>
                 <p className="text-sm">Email: {b.customer.email}</p>
                 {b.customer.phone && <p className="text-sm">Phone: {b.customer.phone}</p>}
                 {b.location && <p className="text-sm">{tBookings("locationLabel")}: {b.location}</p>}
                 {b.notes && <p className="text-sm text-muted-foreground">Notes: {b.notes}</p>}
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="mt-2"
+                  onClick={() =>
+                    downloadICS({
+                      title: `${b.package.name} – ${b.customer.name}`,
+                      startAt: b.startAt,
+                      durationMinutes: b.durationMinutes,
+                      location: b.location,
+                      description: b.notes
+                        ? `Customer: ${b.customer.name}. ${b.notes}`
+                        : `Customer: ${b.customer.name}`,
+                    })
+                  }
+                >
+                  <CalendarPlus className="h-4 w-4 mr-2" />
+                  {t("addToCalendar")}
+                </Button>
               </CardContent>
             </Card>
           ))}

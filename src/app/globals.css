@@ -85,3 +85,20 @@
     @apply text-foreground;
   }
 }
+
+/* FullCalendar: mobile-friendly layout and touch targets */
+@media (max-width: 767px) {
+  .calendar-wrap .fc {
+    font-size: 0.875rem;
+  }
+  .calendar-wrap .fc-toolbar-title {
+    font-size: 1rem;
+  }
+  .calendar-wrap .fc-toolbar-chunk .fc-button {
+    padding: 0.35em 0.5em;
+    font-size: 0.875rem;
+  }
+  .calendar-wrap .fc-list-event:hover td {
+    background: var(--accent);
+  }
+}
