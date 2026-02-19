@@ -58,7 +58,7 @@ export default async function PrivacyPage() {
           </Link>
         </p>
       </main>
-      <footer className="border-t border-border py-6">
+      <footer className="border-t border-border py-6 mt-auto">
         <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
           <Link href="/privacy" className="hover:text-foreground">{tFooter("privacyLink")}</Link>
           {" · "}
