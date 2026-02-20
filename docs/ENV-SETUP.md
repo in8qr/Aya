@@ -292,3 +292,28 @@ pm2 save
 ```
 
 Ensure `.env` on the server has all required variables (see checklist above).
+
+---
+
+## Troubleshooting: "Application error: a server-side exception has occurred"
+
+If the site shows this message (with a digest like `Digest: 2695743590`), a server-side error is being thrown. Check the following:
+
+1. **Server logs** – On the server run:
+   ```bash
+   pm2 logs aya-eye --lines 100
+   ```
+   or
+   ```bash
+   tail -100 /home/ms/apps/aya-eye/aya-eye/logs/pm2-error.log
+   ```
+   The stack trace will show the real error (e.g. database connection, missing env, Prisma schema mismatch).
+
+2. **Database** – Ensure PostgreSQL is running and `DATABASE_URL` in `.env` is correct. Test with:
+   ```bash
+   psql "$DATABASE_URL" -c "SELECT 1"
+   ```
+
+3. **Required env** – Confirm `NEXTAUTH_SECRET` and `NEXTAUTH_URL` are set. `NEXTAUTH_URL` must match the site URL (e.g. `https://aya.mjsrvr.site`).
+
+4. **Schema** – After pulling new code, run `npx prisma generate` and `npx prisma db push` (or `migrate deploy`) so the DB matches the schema.
