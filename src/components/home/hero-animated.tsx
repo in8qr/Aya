@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Link } from "@/i18n/navigation";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
+import { MovingPhotosCarousel, type CarouselSlide } from "@/components/home/moving-photos-carousel";
 import { cn } from "@/lib/utils";
 
 const DEFAULT_HERO_IMAGE =
@@ -18,6 +19,7 @@ export function HeroAnimated({
   viewPortfolio,
   viewPackages,
   imageUrl,
+  carouselSlides = [],
 }: {
   tagline: string;
   title: string;
@@ -25,6 +27,7 @@ export function HeroAnimated({
   viewPortfolio: string;
   viewPackages: string;
   imageUrl?: string | null;
+  carouselSlides?: CarouselSlide[];
 }) {
   const src = imageUrl?.trim() || DEFAULT_HERO_IMAGE;
   const [mounted, setMounted] = useState(false);
@@ -104,6 +107,9 @@ export function HeroAnimated({
           </Link>
         </div>
       </div>
+      {carouselSlides.length > 0 && (
+        <MovingPhotosCarousel slides={carouselSlides} variant="heroOverlay" />
+      )}
     </section>
   );
 }

@@ -19,7 +19,7 @@ export function MovingPhotosCarousel({
   variant = "default",
 }: {
   slides: CarouselSlide[];
-  variant?: "default" | "compact";
+  variant?: "default" | "compact" | "heroOverlay";
 }) {
   const [index, setIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
@@ -49,11 +49,18 @@ export function MovingPhotosCarousel({
   if (slides.length === 0) return null;
 
   const isCompact = variant === "compact";
-  const aspectRatio = isCompact ? "3/1" : "21/9";
-  const sectionClass = isCompact
-    ? "group relative w-full overflow-hidden bg-muted/30 py-4"
-    : "group relative w-full overflow-hidden bg-muted/30";
-  const wrapperClass = isCompact ? "max-w-5xl mx-auto rounded-lg overflow-hidden shadow-lg border border-border/50" : "";
+  const isHeroOverlay = variant === "heroOverlay";
+  const aspectRatio = isHeroOverlay ? undefined : isCompact ? "3/1" : "21/9";
+  const sectionClass = isHeroOverlay
+    ? "group absolute inset-x-0 bottom-0 z-10 w-full overflow-hidden pointer-events-none [&_.carousel-interactive]:pointer-events-auto"
+    : isCompact
+      ? "group relative w-full overflow-hidden bg-muted/30 py-4"
+      : "group relative w-full overflow-hidden bg-muted/30";
+  const wrapperClass = isHeroOverlay
+    ? "carousel-interactive absolute inset-x-0 bottom-0 h-[28vh] min-h-[180px] max-h-[280px] rounded-t-xl overflow-hidden shadow-[0_-4px_24px_rgba(0,0,0,0.4)]"
+    : isCompact
+      ? "max-w-5xl mx-auto rounded-lg overflow-hidden shadow-lg border border-border/50"
+      : "";
 
   return (
     <section className={sectionClass}>
@@ -69,7 +76,7 @@ export function MovingPhotosCarousel({
           <div
             key={slide.id}
             className="relative w-full shrink-0"
-            style={{ aspectRatio }}
+            style={aspectRatio ? { aspectRatio } : isHeroOverlay ? { height: "100%" } : undefined}
           >
             <Image
               src={slide.imageUrl}
