@@ -21,13 +21,13 @@ export default async function AdminLayout({
 
   const nav = [
     { href: "/admin" as const, label: t("calendar") },
+    { href: "/admin/settings" as const, label: t("settings") },
     { href: "/admin/bookings" as const, label: t("bookings") },
     { href: "/admin/packages" as const, label: t("packages") },
     { href: "/admin/portfolio" as const, label: t("portfolio") },
     { href: "/admin/team" as const, label: t("team") },
     { href: "/admin/availability" as const, label: t("availability") },
     { href: "/admin/appearance" as const, label: t("appearance") },
-    { href: "/admin/settings" as const, label: t("settings") },
   ];
 
   return (
