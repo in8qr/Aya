@@ -133,12 +133,12 @@ export default function AdminAppearancePage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ imageUrl: result.data.url, caption: addSlideCaption.trim() || undefined }),
       });
-      if (createRes.ok && createRes.data) {
-        setCarouselSlides((prev) => [...prev, createRes.data!].sort((a, b) => a.sortOrder - b.sortOrder));
+      if (!createRes.ok) {
+        toast({ title: "Error", description: createRes.error, variant: "destructive" });
+      } else if (createRes.data) {
+        setCarouselSlides((prev) => [...prev, createRes.data].sort((a, b) => a.sortOrder - b.sortOrder));
         setAddSlideCaption("");
         toast({ title: t("imageSaved") });
-      } else {
-        toast({ title: "Error", description: createRes.error, variant: "destructive" });
       }
     }
   }

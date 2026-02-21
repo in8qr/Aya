@@ -45,9 +45,10 @@ export function MovingPhotosCarousel({ slides }: { slides: CarouselSlide[] }) {
   return (
     <section className="group relative w-full overflow-hidden bg-muted/30">
       <div
-        className="relative flex transition-transform duration-[600ms] ease-out will-change-transform"
+        className="relative flex transition-transform ease-out will-change-transform"
         style={{
           transform: `translateX(-${index * 100}%)`,
+          transitionDuration: "600ms",
         }}
       >
         {slides.map((slide) => (
