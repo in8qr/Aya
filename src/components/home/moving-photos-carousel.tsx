@@ -52,12 +52,12 @@ export function MovingPhotosCarousel({
   const isHeroOverlay = variant === "heroOverlay";
   const aspectRatio = isHeroOverlay ? undefined : isCompact ? "3/1" : "21/9";
   const sectionClass = isHeroOverlay
-    ? "group absolute inset-x-0 bottom-0 z-10 w-full overflow-hidden pointer-events-none [&_.carousel-interactive]:pointer-events-auto"
+    ? "group absolute inset-x-0 bottom-0 z-10 w-full h-[28vh] min-h-[180px] max-h-[280px] overflow-hidden pointer-events-none [&_.carousel-interactive]:pointer-events-auto"
     : isCompact
       ? "group relative w-full overflow-hidden bg-muted/30 py-4"
       : "group relative w-full overflow-hidden bg-muted/30";
   const wrapperClass = isHeroOverlay
-    ? "carousel-interactive absolute inset-x-0 bottom-0 h-[28vh] min-h-[180px] max-h-[280px] rounded-t-xl overflow-hidden shadow-[0_-4px_24px_rgba(0,0,0,0.4)]"
+    ? "carousel-interactive relative w-full h-full rounded-t-xl overflow-hidden shadow-[0_-4px_24px_rgba(0,0,0,0.4)]"
     : isCompact
       ? "max-w-5xl mx-auto rounded-lg overflow-hidden shadow-lg border border-border/50"
       : "";
@@ -66,7 +66,7 @@ export function MovingPhotosCarousel({
     <section className={sectionClass}>
       <div className={wrapperClass}>
       <div
-        className="relative flex transition-transform ease-out will-change-transform"
+        className={cn("relative flex transition-transform ease-out will-change-transform", isHeroOverlay && "h-full")}
         style={{
           transform: `translateX(-${index * 100}%)`,
           transitionDuration: "600ms",
