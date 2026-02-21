@@ -47,6 +47,7 @@ export default function AdminPackagesPage() {
       nameAr: (pkg.nameAr?.trim()) || null,
       descriptionAr: (pkg.descriptionAr?.trim()) || null,
       deliverablesAr: (pkg.deliverablesAr?.trim()) || null,
+      visible: pkg.visible ?? true,
     };
     const url = editing ? `/api/packages/${editing.id}` : "/api/packages";
     const method = editing ? "PATCH" : "POST";

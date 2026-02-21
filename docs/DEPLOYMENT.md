@@ -190,6 +190,30 @@ pm2 restart aya-eye
 
 Use `npx prisma migrate deploy` instead of `db push` if you use migrations.
 
+### P3005: "The database schema is not empty" when running `prisma migrate deploy`
+
+**Cause:** The database was created with `npx prisma db push` (or tables were created some other way), so there is no Prisma migration history. `migrate deploy` expects either an empty database or one that was built from migrations.
+
+**Fix (recommended):** Keep using **`npx prisma db push`** to apply schema changes. From the app directory run:
+
+```bash
+npx prisma db push
+```
+
+This adds any new columns (e.g. `nameAr`, `descriptionAr`, `deliverablesAr` on `Package`) without needing migration history. Your deploy script and docs already use `db push` for this.
+
+**Alternative (if you want to use migrations from now on):** Run the migration SQL yourself, then mark it as applied so Prisma doesn’t run it again:
+
+```bash
+# Connect to your DB (replace with your connection details)
+psql "$DATABASE_URL" -c "
+  ALTER TABLE \"Package\" ADD COLUMN IF NOT EXISTS \"nameAr\" TEXT;
+  ALTER TABLE \"Package\" ADD COLUMN IF NOT EXISTS \"descriptionAr\" TEXT;
+  ALTER TABLE \"Package\" ADD COLUMN IF NOT EXISTS \"deliverablesAr\" TEXT;
+"
+npx prisma migrate resolve --applied 20250217000000_add_package_ar_fields
+```
+
 ---
 
 ## 5. Nginx and HTTPS (optional)

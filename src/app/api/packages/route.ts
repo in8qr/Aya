@@ -35,7 +35,7 @@ function localizePackage(
 export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-    const visibleOnly = !session?.user || session.user.role === "CUSTOMER";
+    const visibleOnly = session?.user?.role !== "ADMIN";
     const { searchParams } = new URL(request.url);
     const locale = (searchParams.get("locale") || "en").toLowerCase() === "ar" ? "ar" : "en";
 

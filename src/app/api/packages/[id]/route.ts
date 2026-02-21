@@ -40,7 +40,7 @@ export async function GET(
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
   const session = await getServerSession(authOptions);
-  if (!session?.user && !pkg.visible) {
+  if (session?.user?.role !== "ADMIN" && !pkg.visible) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
   const { searchParams } = new URL(request.url);
