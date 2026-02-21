@@ -187,7 +187,16 @@
     "capacityOverrides": "تجاوزات السعة",
     "capacityOverridesDescription": "تحديد عدد الحجوزات المؤكدة المسموح بها في يوم معين.",
     "teamUnavailability": "عدم توفر الفريق",
-    "teamUnavailabilityDescription": "حدد فترات عدم توفر أحد أعضاء الفريق (تقلل السعة في تلك الفترة)."
+    "teamUnavailabilityDescription": "حدد فترات عدم توفر أحد أعضاء الفريق (تقلل السعة في تلك الفترة).",
+    "movingPhotos": "الصور المتحركة (الكرسي)",
+    "movingPhotosDescription": "صور تُعرض في كرسي على الصفحة الرئيسية. أضف أو أعد ترتيب أو احذف الشرائح.",
+    "addSlide": "إضافة شريحة",
+    "slideCaption": "التسمية (اختياري)",
+    "slideCaptionPlaceholder": "تسمية قصيرة لهذه الشريحة",
+    "moveUp": "تحريك لأعلى",
+    "moveDown": "تحريك لأسفل",
+    "removeSlide": "إزالة",
+    "noCarouselSlides": "لا توجد شرائح بعد. أضف صوراً أدناه لعرض الكرسي على الصفحة الرئيسية."
   },
   "adminTeam": {
     "addUser": "إضافة مستخدم",
