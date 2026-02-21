@@ -3,13 +3,13 @@ import { isSmtpConfigured, sendMail as sendMailSmtp, type EmailAttachment } from
 import { wrapEmailContent, emailStyles, emailList } from "@/lib/email-template";
 import { getEmailCopy, type EmailLocale } from "@/lib/email-i18n";
 import { buildBookingICS } from "@/lib/calendar-invite";
+import { getEmailFrom } from "@/lib/site-settings";
 
 function getResend(): Resend | null {
   const key = process.env.RESEND_API_KEY;
   if (!key) return null;
   return new Resend(key);
 }
-const from = process.env.EMAIL_FROM ?? process.env.EMAIL_VERIFICATION_FROM ?? "Aya Eye <noreply@example.com>";
 
 function escapeHtml(s: string): string {
   return s
@@ -59,6 +59,7 @@ export async function sendAssignmentEmail(params: {
   }
   const resend = getResend();
   if (!resend) return;
+  const from = await getEmailFrom();
   const { error } = await resend.emails.send({ from, to: [to], subject, html });
   if (error) throw new Error(JSON.stringify(error));
 }
@@ -130,6 +131,7 @@ export async function sendConfirmationEmail(params: {
   }
   const resend = getResend();
   if (!resend) return;
+  const from = await getEmailFrom();
   const { error } = await resend.emails.send({
     from,
     to: [to],
@@ -168,6 +170,7 @@ export async function sendRejectionEmail(params: {
   }
   const resend = getResend();
   if (!resend) return;
+  const from = await getEmailFrom();
   const { error } = await resend.emails.send({ from, to: [to], subject, html });
   if (error) throw new Error(JSON.stringify(error));
 }

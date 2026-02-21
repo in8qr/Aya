@@ -3,6 +3,7 @@ import nodemailer from "nodemailer";
 import { logError } from "@/lib/logger";
 import { wrapEmailContent, emailStyles } from "@/lib/email-template";
 import { getEmailCopy, type EmailLocale } from "@/lib/email-i18n";
+import { getEmailFrom } from "@/lib/site-settings";
 
 /**
  * Sends the verification OTP email. Uses SMTP (e.g. Gmail) so the admin can
@@ -30,13 +31,9 @@ function getTransporter(): nodemailer.Transporter | null {
   });
 }
 
-/** From address for verification emails (configurable; e.g. your Gmail). */
-export function getVerificationFrom(): string {
-  return (
-    process.env.EMAIL_VERIFICATION_FROM ||
-    process.env.EMAIL_FROM ||
-    "Aya Eye <noreply@example.com>"
-  );
+/** From address for verification emails (uses admin setting or env). */
+export async function getVerificationFrom(): Promise<string> {
+  return getEmailFrom();
 }
 
 export async function sendVerificationOtpEmail(
@@ -49,7 +46,7 @@ export async function sendVerificationOtpEmail(
     logError("Email verification: SMTP not configured (SMTP_HOST, SMTP_USER, SMTP_PASSWORD)");
     return false;
   }
-  const from = getVerificationFrom();
+  const from = await getEmailFrom();
   const t = getEmailCopy(locale).otp;
   const content = `
     <p style="${emailStyles.body}">${t.body}</p>
@@ -82,7 +79,7 @@ export function isSmtpConfigured(): boolean {
 
 export type EmailAttachment = { filename: string; content: string | Buffer };
 
-/** Single sender for all app email (OTP + team notifications). Uses EMAIL_FROM / EMAIL_VERIFICATION_FROM. */
+/** Single sender for all app email (OTP + team notifications). Uses admin setting or env. */
 export async function sendMail(params: {
   to: string;
   subject: string;
@@ -92,7 +89,7 @@ export async function sendMail(params: {
 }): Promise<boolean> {
   const transporter = getTransporter();
   if (!transporter) return false;
-  const from = getVerificationFrom();
+  const from = await getEmailFrom();
   try {
     await transporter.sendMail({
       from,

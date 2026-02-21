@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getReceiptSignedUrl, isS3Configured } from "@/lib/s3";
+import { getAppUrl } from "@/lib/site-settings";
 
 export async function GET(
   _request: NextRequest,
@@ -25,7 +26,7 @@ export async function GET(
   if (isS3Configured()) {
     url = await getReceiptSignedUrl(attachment.fileUrl);
   } else {
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+    const baseUrl = await getAppUrl();
     url = `${baseUrl}/api/storage/receipts/${encodeURIComponent(attachment.fileUrl)}`;
   }
   return NextResponse.json({ url });

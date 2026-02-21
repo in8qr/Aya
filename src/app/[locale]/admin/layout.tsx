@@ -27,6 +27,7 @@ export default async function AdminLayout({
     { href: "/admin/team" as const, label: t("team") },
     { href: "/admin/availability" as const, label: t("availability") },
     { href: "/admin/appearance" as const, label: t("appearance") },
+    { href: "/admin/settings" as const, label: t("settings") },
   ];
 
   return (
