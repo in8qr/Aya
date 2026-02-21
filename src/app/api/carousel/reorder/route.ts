@@ -24,7 +24,7 @@ export async function PATCH(request: NextRequest) {
   const parsed = reorderSchema.safeParse(body);
   if (!parsed.success) {
     return NextResponse.json(
-      { error: parsed.error.flatten().message },
+      { error: parsed.error.message },
       { status: 400 }
     );
   }
