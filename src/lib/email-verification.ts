@@ -3,7 +3,14 @@ import nodemailer from "nodemailer";
 import { logError } from "@/lib/logger";
 import { wrapEmailContent, emailStyles } from "@/lib/email-template";
 import { getEmailCopy, type EmailLocale } from "@/lib/email-i18n";
-import { getEmailFrom } from "@/lib/site-settings";
+import {
+  getEmailFrom,
+  getSmtpHost,
+  getSmtpUser,
+  getSmtpPassword,
+  getSmtpPort,
+  getSmtpSecure,
+} from "@/lib/site-settings";
 
 /**
  * Sends the verification OTP email. Uses SMTP (e.g. Gmail) so the admin can
@@ -16,13 +23,15 @@ export function generateOtp(): string {
   return String(randomInt(0, 1_000_000)).padStart(6, "0");
 }
 
-function getTransporter(): nodemailer.Transporter | null {
-  const host = process.env.SMTP_HOST;
-  const user = process.env.SMTP_USER;
-  const pass = process.env.SMTP_PASSWORD;
+async function getTransporter(): Promise<nodemailer.Transporter | null> {
+  const [host, user, pass] = await Promise.all([
+    getSmtpHost(),
+    getSmtpUser(),
+    getSmtpPassword(),
+  ]);
   if (!host || !user || !pass) return null;
-  const port = Number(process.env.SMTP_PORT) || 587;
-  const secure = process.env.SMTP_SECURE === "true";
+  const port = await getSmtpPort();
+  const secure = await getSmtpSecure();
   return nodemailer.createTransport({
     host,
     port,
@@ -41,7 +50,7 @@ export async function sendVerificationOtpEmail(
   otp: string,
   locale: EmailLocale = "en"
 ): Promise<boolean> {
-  const transporter = getTransporter();
+  const transporter = await getTransporter();
   if (!transporter) {
     logError("Email verification: SMTP not configured (SMTP_HOST, SMTP_USER, SMTP_PASSWORD)");
     return false;
@@ -73,8 +82,9 @@ export async function sendVerificationOtpEmail(
 export { OTP_EXPIRY_MINUTES };
 
 /** Whether SMTP is configured (used for OTP and for booking emails when set). */
-export function isSmtpConfigured(): boolean {
-  return getTransporter() !== null;
+export async function isSmtpConfigured(): Promise<boolean> {
+  const transporter = await getTransporter();
+  return transporter !== null;
 }
 
 export type EmailAttachment = { filename: string; content: string | Buffer };
@@ -87,7 +97,7 @@ export async function sendMail(params: {
   text?: string;
   attachments?: EmailAttachment[];
 }): Promise<boolean> {
-  const transporter = getTransporter();
+  const transporter = await getTransporter();
   if (!transporter) return false;
   const from = await getEmailFrom();
   try {

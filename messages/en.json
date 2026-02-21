@@ -199,7 +199,8 @@
     "noCarouselSlides": "No slides yet. Add photos below to show a carousel on the homepage.",
     "settings": "Settings",
     "settingsDescription": "Site and email settings. Values here override environment variables.",
-    "settingsSaved": "Settings saved"
+    "settingsSaved": "Settings saved",
+    "settingsSmtpSection": "SMTP (sending email)"
   },
   "adminTeam": {
     "addUser": "Add user",
