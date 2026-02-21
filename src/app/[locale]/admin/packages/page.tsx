@@ -116,7 +116,7 @@ export default function AdminPackagesPage() {
           <DialogHeader>
             <DialogTitle>{editing ? tPkg("editPackage") : tPkg("newPackage")}</DialogTitle>
           </DialogHeader>
-          <PackageForm initial={editing ?? undefined} onSave={save} onCancel={() => { setOpen(false); setEditing(null); }} />
+          <PackageForm key={editing?.id ?? "new"} initial={editing ?? undefined} onSave={save} onCancel={() => { setOpen(false); setEditing(null); }} />
         </DialogContent>
       </Dialog>
     </div>
@@ -142,7 +142,7 @@ function PackageForm({
   const [descriptionAr, setDescriptionAr] = useState(initial?.descriptionAr ?? "");
   const [deliverables, setDeliverables] = useState(initial?.deliverables ?? "");
   const [deliverablesAr, setDeliverablesAr] = useState(initial?.deliverablesAr ?? "");
-  const [visible, setVisible] = useState(initial?.visible ?? true);
+  const [visible, setVisible] = useState(initial?.visible !== false);
 
   return (
     <form

@@ -58,15 +58,20 @@ export async function PATCH(
   }
 
   const id = (await params).id;
-  const body = await request.json();
+  const body = await request.json().catch(() => ({}));
   const parsed = updateBody.safeParse(body);
   if (!parsed.success) {
     return NextResponse.json(parsed.error.flatten(), { status: 400 });
   }
 
+  const data: Record<string, unknown> = { ...parsed.data };
+  if (typeof (body as { visible?: unknown }).visible === "boolean") {
+    data.visible = (body as { visible: boolean }).visible;
+  }
+
   const pkg = await prisma.package.update({
     where: { id },
-    data: parsed.data,
+    data: data as Parameters<typeof prisma.package.update>[0]["data"],
   });
   return NextResponse.json(pkg);
 }
