@@ -270,6 +270,7 @@ location / {
 1. **Run both `git pull` and `npm run build` from the app root** — the directory that contains `package.json`, `src/`, and `next.config.ts` (e.g. `~/apps/aya-eye/aya-eye`).
 2. The build script now runs `scripts/ensure-app-root.js` first; if you're in the wrong directory, it will exit with a clear message instead of compiling the wrong tree.
 3. From the correct app root: `git pull origin main`, then `rm -rf .next && npm run build && pm2 restart aya-eye`.
+4. **If the error path is still `./aya-eye/aya-eye/src/...`** after pulling: Next.js may be compiling a different copy. Run `find . -name "route.ts" -path "*carousel*"` from the app root; if you see more than one path, remove or fix the duplicate tree so only one `src/` is used. The repo has `eslint.ignoreDuringBuilds` and `typescript.ignoreBuildErrors` in `next.config.ts` so the build can succeed despite that; run `npm run lint` and fix types locally.
 
 ### `EACCES: permission denied` when running `npm install -g pm2`
 
