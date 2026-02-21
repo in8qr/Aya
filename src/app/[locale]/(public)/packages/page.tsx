@@ -40,10 +40,10 @@ export default function PackagesPage() {
   }, []);
 
   return (
-    <div className="container mx-auto px-4 py-16">
+    <div className="container mx-auto px-3 sm:px-4 max-w-4xl py-10 sm:py-14 md:py-16">
       <AnimateInView animation="fade-in-up">
-        <h1 className="font-display text-4xl font-medium tracking-tight mb-2">{t("title")}</h1>
-        <p className="text-muted-foreground mb-10 tracking-wide">{t("noOnlinePayments")}</p>
+        <h1 className="font-display text-3xl sm:text-4xl md:text-5xl font-medium tracking-tight mb-2">{t("title")}</h1>
+        <p className="text-muted-foreground mb-8 sm:mb-10 tracking-wide text-sm sm:text-base">{t("noOnlinePayments")}</p>
       </AnimateInView>
       {loading ? (
         <p className="text-muted-foreground">{t("loading")}</p>
@@ -56,7 +56,7 @@ export default function PackagesPage() {
       ) : packages.length === 0 ? (
         <p className="text-muted-foreground">{t("noPackages")}</p>
       ) : (
-        <div className="grid gap-6 md:grid-cols-2">
+        <div className="grid gap-4 sm:gap-6 sm:grid-cols-2">
           {packages.map((pkg, i) => (
             <AnimateInView key={pkg.id} animation="fade-in-up" delay={i * 80}>
               <Card className="border-border bg-card transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg">

@@ -9,9 +9,9 @@ export default async function PrivacyPage() {
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <PublicHeader />
-      <main className="flex-1 container mx-auto px-4 max-w-3xl py-12">
-        <h1 className="font-display text-3xl font-medium tracking-tight mb-2">{t("title")}</h1>
-        <p className="text-sm text-muted-foreground mb-8">{t("lastUpdated")}</p>
+      <main className="flex-1 container mx-auto px-3 sm:px-4 max-w-3xl py-8 sm:py-10 md:py-12">
+        <h1 className="font-display text-2xl sm:text-3xl font-medium tracking-tight mb-2">{t("title")}</h1>
+        <p className="text-xs sm:text-sm text-muted-foreground mb-6 sm:mb-8">{t("lastUpdated")}</p>
 
         <div className="prose prose-invert prose-sm max-w-none space-y-6 text-foreground">
           <p className="text-muted-foreground">{t("intro")}</p>
@@ -58,8 +58,8 @@ export default async function PrivacyPage() {
           </Link>
         </p>
       </main>
-      <footer className="border-t border-border py-6 mt-auto">
-        <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
+      <footer className="border-t border-border py-4 sm:py-6 mt-auto">
+        <div className="container mx-auto px-3 sm:px-4 text-center text-xs sm:text-sm text-muted-foreground">
           <Link href="/privacy" className="hover:text-foreground">{tFooter("privacyLink")}</Link>
           {" · "}
           <span>© {new Date().getFullYear()} Aya Eye</span>

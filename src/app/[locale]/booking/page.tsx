@@ -130,7 +130,7 @@ function BookingContent() {
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <PublicHeader />
-      <main className="flex-1 container mx-auto px-4 py-8 sm:py-12 max-w-lg">
+      <main className="flex-1 container mx-auto px-3 sm:px-4 py-6 sm:py-8 md:py-12 max-w-lg">
         <h1 className="font-display text-3xl sm:text-4xl font-medium tracking-tight mb-4 sm:mb-6">{t("title")}</h1>
         <p className="text-muted-foreground mb-6 tracking-wide text-sm sm:text-base">{t("offlineNote")}</p>
         <form onSubmit={handleSubmit} className="space-y-6">

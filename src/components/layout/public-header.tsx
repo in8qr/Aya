@@ -94,13 +94,13 @@ export function PublicHeader() {
   );
 
   return (
-    <header className="border-b border-border/80">
-      <div className="container mx-auto px-4 min-h-14 sm:min-h-0 sm:h-20 flex items-center justify-between gap-2">
-        <Link href="/" className="font-display font-semibold text-xl sm:text-2xl tracking-tight text-primary shrink-0">
+    <header className="sticky top-0 z-50 border-b border-border/80 bg-background/95 backdrop-blur-sm supports-[backdrop-filter]:bg-background/90">
+      <div className="container mx-auto px-3 sm:px-4 max-w-7xl min-h-14 sm:min-h-0 sm:h-16 md:h-20 flex items-center justify-between gap-2">
+        <Link href="/" className="font-display font-semibold text-lg sm:text-xl md:text-2xl tracking-tight text-primary shrink-0">
           {tCommon("brand")}
         </Link>
         {/* Desktop nav */}
-        <nav className="hidden md:flex gap-6 md:gap-8 items-center text-sm tracking-wide uppercase text-muted-foreground">
+        <nav className="hidden md:flex gap-4 lg:gap-6 xl:gap-8 items-center text-xs lg:text-sm tracking-wide uppercase text-muted-foreground">
           <Link href="/portfolio" className="relative py-1 text-muted-foreground hover:text-foreground" data-nav-link>
             {t("portfolio")}
           </Link>
@@ -183,7 +183,7 @@ export function PublicHeader() {
       </div>
       <Dialog open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
         <DialogContent
-          className="max-w-[min(90vw,20rem)] border-border bg-card p-4 sm:p-6 top-[4.5rem] translate-y-0 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:slide-in-from-right-5 data-[state=open]:duration-200"
+          className="max-w-[min(90vw,20rem)] border-border bg-card p-4 sm:p-6 top-14 translate-y-0 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:slide-in-from-right-5 data-[state=open]:duration-200"
           showClose={true}
         >
           <nav className="flex flex-col gap-1 text-sm tracking-wide uppercase text-muted-foreground">
