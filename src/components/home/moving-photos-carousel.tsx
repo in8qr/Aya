@@ -52,7 +52,7 @@ export function MovingPhotosCarousel({
   const isHeroOverlay = variant === "heroOverlay";
   const aspectRatio = isHeroOverlay ? undefined : isCompact ? "3/1" : "21/9";
   const sectionClass = isHeroOverlay
-    ? "group absolute inset-x-0 bottom-0 z-10 flex justify-center items-end pb-6 sm:pb-8 md:pb-10 pointer-events-none [&_.carousel-interactive]:pointer-events-auto"
+    ? "group relative pointer-events-none [&_.carousel-interactive]:pointer-events-auto"
     : isCompact
       ? "group relative w-full overflow-hidden bg-muted/30 py-4"
       : "group relative w-full overflow-hidden bg-muted/30";

@@ -38,7 +38,7 @@ export function HeroAnimated({
   }, []);
 
   return (
-    <section className="relative min-h-[70vh] sm:min-h-[80vh] md:min-h-[85vh] flex items-center justify-center overflow-hidden">
+    <section className="relative min-h-[70vh] sm:min-h-[80vh] md:min-h-[85vh] flex flex-col items-center justify-center overflow-hidden">
       <div className="absolute inset-0 z-0">
         <Image
           src={src}
@@ -53,7 +53,7 @@ export function HeroAnimated({
           aria-hidden
         />
       </div>
-      <div className="relative z-10 py-12 sm:py-20 md:py-24 lg:py-32 px-3 sm:px-4 text-center max-w-4xl mx-auto">
+      <div className="relative z-10 flex flex-col items-center flex-1 justify-center w-full py-12 sm:py-20 md:py-24 lg:py-32 px-3 sm:px-4 text-center max-w-4xl mx-auto">
         <p
           className={cn(
             "text-xs uppercase tracking-[0.2em] sm:tracking-[0.3em] text-white/90 mb-4 sm:mb-6 transition-all duration-500 ease-out",
@@ -108,7 +108,9 @@ export function HeroAnimated({
         </div>
       </div>
       {carouselSlides.length > 0 && (
-        <MovingPhotosCarousel slides={carouselSlides} variant="heroOverlay" />
+        <div className="relative z-10 w-full flex justify-center pb-6 sm:pb-8 md:pb-10 shrink-0">
+          <MovingPhotosCarousel slides={carouselSlides} variant="heroOverlay" />
+        </div>
       )}
     </section>
   );
