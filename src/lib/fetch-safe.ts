@@ -7,6 +7,11 @@ export type FetchResult<T> =
   | { ok: true; data: T }
   | { ok: false; error: string; status?: number };
 
+/** Type guard: use so TypeScript narrows FetchResult in else branches. */
+export function isFetchError<T>(r: FetchResult<T>): r is { ok: false; error: string; status?: number } {
+  return !r.ok;
+}
+
 export async function fetchJson<T>(url: string, options?: RequestInit): Promise<FetchResult<T>> {
   try {
     const res = await fetch(url, options);

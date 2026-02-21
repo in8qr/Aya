@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { useTranslations } from "next-intl";
-import { fetchJson } from "@/lib/fetch-safe";
+import { fetchJson, isFetchError } from "@/lib/fetch-safe";
 import { ChevronUp, ChevronDown, Trash2 } from "lucide-react";
 
 const FALLBACK_HERO =
@@ -133,10 +133,9 @@ export default function AdminAppearancePage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ imageUrl: result.data.url, caption: addSlideCaption.trim() || undefined }),
       });
-      const createError = !createRes.ok ? createRes.error : null;
-      if (createError) {
-        toast({ title: "Error", description: createError, variant: "destructive" });
-      } else if (createRes.ok && createRes.data) {
+      if (isFetchError(createRes)) {
+        toast({ title: "Error", description: createRes.error, variant: "destructive" });
+      } else if (createRes.data) {
         setCarouselSlides((prev) => [...prev, createRes.data].sort((a, b) => a.sortOrder - b.sortOrder));
         setAddSlideCaption("");
         toast({ title: t("imageSaved") });
