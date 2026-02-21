@@ -24,6 +24,8 @@ export default function AdminAppearancePage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [heroPendingFile, setHeroPendingFile] = useState<File | null>(null);
+  const [heroPreviewUrl, setHeroPreviewUrl] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [carouselSlides, setCarouselSlides] = useState<CarouselSlide[]>([]);
@@ -33,6 +35,7 @@ export default function AdminAppearancePage() {
   const [addSlideUploading, setAddSlideUploading] = useState(false);
   const [addSlideSaving, setAddSlideSaving] = useState(false);
   const [captionDrafts, setCaptionDrafts] = useState<Record<string, string>>({});
+  const [pendingCarouselFiles, setPendingCarouselFiles] = useState<{ file: File; caption: string; preview: string }[]>([]);
   const carouselFileRef = useRef<HTMLInputElement>(null);
 
   const { toast } = useToast();
@@ -57,18 +60,32 @@ export default function AdminAppearancePage() {
     loadCarousel();
   }, [loadCarousel]);
 
-  async function handleUpload(e: React.ChangeEvent<HTMLInputElement>) {
+  function handleHeroFileSelect(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
+    e.target.value = "";
     if (!file) return;
+    if (heroPreviewUrl) URL.revokeObjectURL(heroPreviewUrl);
+    setHeroPendingFile(file);
+    setHeroPreviewUrl(URL.createObjectURL(file));
+  }
+
+  function cancelHeroPreview() {
+    if (heroPreviewUrl) URL.revokeObjectURL(heroPreviewUrl);
+    setHeroPendingFile(null);
+    setHeroPreviewUrl(null);
+  }
+
+  async function confirmSetHeroImage() {
+    if (!heroPendingFile) return;
     setUploading(true);
     const form = new FormData();
-    form.set("file", file);
+    form.set("file", heroPendingFile);
     const result = await fetchJson<{ url: string }>("/api/settings/hero-image/upload", {
       method: "POST",
       body: form,
     });
     setUploading(false);
-    e.target.value = "";
+    cancelHeroPreview();
     if (!result.ok) {
       toast({ title: "Upload failed", description: result.error, variant: "destructive" });
       return;
@@ -114,33 +131,63 @@ export default function AdminAppearancePage() {
     toast({ title: t("imageRemoved") });
   }
 
-  async function addSlideByUpload(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setAddSlideUploading(true);
-    const form = new FormData();
-    form.set("file", file);
-    const result = await fetchJson<{ url: string }>("/api/carousel/upload", { method: "POST", body: form });
-    setAddSlideUploading(false);
+  function handleCarouselFilesSelect(e: React.ChangeEvent<HTMLInputElement>) {
+    const files = e.target.files;
     e.target.value = "";
-    if (!result.ok) {
-      toast({ title: "Upload failed", description: result.error, variant: "destructive" });
-      return;
-    }
-    if (result.data?.url) {
-      const createRes = await fetchJson<CarouselSlide>("/api/carousel", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ imageUrl: result.data.url, caption: addSlideCaption.trim() || undefined }),
-      });
-      if (isFetchError(createRes)) {
-        toast({ title: "Error", description: createRes.error, variant: "destructive" });
-      } else if (createRes.data) {
-        setCarouselSlides((prev) => [...prev, createRes.data].sort((a, b) => a.sortOrder - b.sortOrder));
-        setAddSlideCaption("");
-        toast({ title: t("imageSaved") });
+    if (!files?.length) return;
+    const newPending = Array.from(files).map((file) => ({
+      file,
+      caption: "",
+      preview: URL.createObjectURL(file),
+    }));
+    setPendingCarouselFiles((prev) => [...prev, ...newPending]);
+  }
+
+  function removePendingCarousel(index: number) {
+    setPendingCarouselFiles((prev) => {
+      const next = [...prev];
+      URL.revokeObjectURL(next[index].preview);
+      next.splice(index, 1);
+      return next;
+    });
+  }
+
+  function setPendingCarouselCaption(index: number, caption: string) {
+    setPendingCarouselFiles((prev) =>
+      prev.map((p, i) => (i === index ? { ...p, caption } : p))
+    );
+  }
+
+  async function confirmAddCarouselUploads() {
+    if (pendingCarouselFiles.length === 0) return;
+    setAddSlideUploading(true);
+    let added = 0;
+    for (const { file, caption } of pendingCarouselFiles) {
+      const form = new FormData();
+      form.set("file", file);
+      const uploadRes = await fetchJson<{ url: string }>("/api/carousel/upload", { method: "POST", body: form });
+      if (!uploadRes.ok) {
+        toast({ title: "Upload failed", description: uploadRes.error, variant: "destructive" });
+        continue;
+      }
+      if (uploadRes.data?.url) {
+        const createRes = await fetchJson<CarouselSlide>("/api/carousel", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ imageUrl: uploadRes.data.url, caption: caption.trim() || undefined }),
+        });
+        if (createRes.ok && createRes.data) {
+          setCarouselSlides((prev) => [...prev, createRes.data!].sort((a, b) => a.sortOrder - b.sortOrder));
+          added++;
+        }
       }
     }
+    setPendingCarouselFiles((prev) => {
+      prev.forEach((p) => URL.revokeObjectURL(p.preview));
+      return [];
+    });
+    setAddSlideUploading(false);
+    if (added > 0) toast({ title: t("imageSaved"), description: `${added} slide(s) added.` });
   }
 
   async function addSlideByUrl() {
@@ -224,18 +271,30 @@ export default function AdminAppearancePage() {
         <CardContent className="space-y-6">
           <div className="relative aspect-[21/9] w-full rounded-md border border-border overflow-hidden bg-muted">
             <Image
-              src={displayUrl}
+              src={heroPreviewUrl || displayUrl}
               alt=""
               fill
               className="object-cover"
               sizes="(max-width: 768px) 100vw, 672px"
             />
-            {!heroUrl && (
+            {!heroUrl && !heroPreviewUrl && (
               <span className="absolute bottom-2 left-2 text-xs text-white/80 bg-black/50 px-2 py-1 rounded">
                 {t("defaultImage")}
               </span>
             )}
           </div>
+
+          {heroPendingFile && (
+            <div className="flex flex-wrap items-center gap-2 p-3 rounded-lg border border-border bg-muted/30">
+              <span className="text-sm text-muted-foreground">{heroPendingFile.name}</span>
+              <Button type="button" onClick={confirmSetHeroImage} disabled={uploading}>
+                {uploading ? "Uploading…" : "Set as hero"}
+              </Button>
+              <Button type="button" variant="outline" onClick={cancelHeroPreview} disabled={uploading}>
+                Cancel
+              </Button>
+            </div>
+          )}
 
           <div className="space-y-2">
             <Label>{t("uploadImage")}</Label>
@@ -244,7 +303,7 @@ export default function AdminAppearancePage() {
               type="file"
               accept="image/jpeg,image/png,image/webp,image/gif"
               className="hidden"
-              onChange={handleUpload}
+              onChange={handleHeroFileSelect}
             />
             <Button
               type="button"
@@ -252,7 +311,7 @@ export default function AdminAppearancePage() {
               onClick={() => fileInputRef.current?.click()}
               disabled={uploading}
             >
-              {uploading ? "Uploading…" : t("uploadImage")}
+              {t("uploadImage")}
             </Button>
           </div>
 
@@ -364,14 +423,15 @@ export default function AdminAppearancePage() {
 
           <div className="border-t border-border pt-6 space-y-3">
             <p className="text-sm font-medium">{t("addSlide")}</p>
+            <input
+              ref={carouselFileRef}
+              type="file"
+              accept="image/jpeg,image/png,image/webp,image/gif"
+              className="hidden"
+              multiple
+              onChange={handleCarouselFilesSelect}
+            />
             <div className="flex flex-wrap gap-2">
-              <input
-                ref={carouselFileRef}
-                type="file"
-                accept="image/jpeg,image/png,image/webp,image/gif"
-                className="hidden"
-                onChange={addSlideByUpload}
-              />
               <Button
                 type="button"
                 variant="outline"
@@ -379,9 +439,49 @@ export default function AdminAppearancePage() {
                 onClick={() => carouselFileRef.current?.click()}
                 disabled={addSlideUploading}
               >
-                {addSlideUploading ? "Uploading…" : t("uploadImage")}
+                {t("uploadImage")} (multiple)
               </Button>
+              {pendingCarouselFiles.length > 0 && (
+                <Button
+                  type="button"
+                  size="sm"
+                  onClick={confirmAddCarouselUploads}
+                  disabled={addSlideUploading}
+                >
+                  {addSlideUploading ? "Adding…" : `Add ${pendingCarouselFiles.length} to carousel`}
+                </Button>
+              )}
             </div>
+            {pendingCarouselFiles.length > 0 && (
+              <ul className="space-y-2 mt-3">
+                {pendingCarouselFiles.map((item, index) => (
+                  <li
+                    key={index}
+                    className="flex items-center gap-2 p-2 rounded border border-border bg-muted/20"
+                  >
+                    <div className="relative w-16 h-10 shrink-0 rounded overflow-hidden bg-muted">
+                      <Image src={item.preview} alt="" fill className="object-cover" sizes="64px" />
+                    </div>
+                    <Input
+                      placeholder={t("slideCaptionPlaceholder")}
+                      value={item.caption}
+                      onChange={(e) => setPendingCarouselCaption(index, e.target.value)}
+                      className="flex-1 text-sm h-8"
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8 shrink-0 text-muted-foreground"
+                      onClick={() => removePendingCarousel(index)}
+                      aria-label={t("removeSlide")}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </li>
+                ))}
+              </ul>
+            )}
             <div className="flex flex-col sm:flex-row gap-2">
               <Input
                 type="url"

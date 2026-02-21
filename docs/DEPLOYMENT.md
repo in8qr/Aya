@@ -261,16 +261,39 @@ location / {
 - The homepage imports the moving-photos carousel, but the carousel component or lib is missing in the branch you deployed.
 - **Fix:** Either deploy the branch that includes the full carousel feature (e.g. `feature/moving-photos`), or use the default branch that does not depend on the carousel (homepage shows only hero + footer section).
 
+### Too many nested `aya-eye` folders (e.g. `apps/aya-eye/aya-eye/aya-eye/`)
+
+If your tree looks like `/home/ms/apps/aya-eye/` → inside it another `aya-eye/` → inside that another `aya-eye/`, you have duplicate copies. The build can compile the wrong (stale) copy and fail with type errors even after `git pull`.
+
+**Fix: keep a single app root and remove the nested duplicate(s).**
+
+1. **Pick one app root** — e.g. `/home/ms/apps/aya-eye/` (one level) **or** `/home/ms/apps/aya-eye/aya-eye/` (two levels). The root must contain `.git`, `package.json`, `src/`, and `next.config.ts` directly (no extra `aya-eye` folder inside it).
+
+2. **If your app root is `/home/ms/apps/aya-eye/`** (one level) and you have a nested `aya-eye` inside it that you do **not** use, remove it:
+   ```bash
+   cd /home/ms/apps/aya-eye
+   rm -rf aya-eye
+   ```
+   Then use `/home/ms/apps/aya-eye` as the app root for `git pull`, `npm run build`, and `pm2`.
+
+3. **If you want two levels** (`/home/ms/apps/aya-eye/aya-eye/` as the app root): remove only the **innermost** nested folder so there is no `aya-eye/aya-eye/aya-eye/`:
+   ```bash
+   cd /home/ms/apps/aya-eye/aya-eye
+   rm -rf aya-eye
+   ```
+   Then use this directory as the app root for all commands (`git pull`, `npm run build`, `pm2`).
+
+4. **After cleanup:** From your chosen app root run `git pull origin main`, `rm -rf .next`, `npm run build`, `pm2 restart aya-eye`. There should be only one `src/` under that root.
+
 ### Build error path shows `./aya-eye/aya-eye/src/...` or build uses old code
 
-**Root cause:** Next.js reports file paths relative to the **current working directory (cwd)** when you run `npm run build`. If the error points at `./aya-eye/aya-eye/src/...`, then cwd is **two levels above** `src/` (e.g. you ran `npm run build` from `~/apps/aya-eye` instead of `~/apps/aya-eye/aya-eye`). The directory that actually gets compiled may be a nested copy that was never updated by `git pull`, so you see type errors (e.g. Zod `flatten().message`) that are already fixed in the repo.
+**Root cause:** Next.js is compiling a **different copy** of the app (e.g. a nested `aya-eye/aya-eye` folder). That copy may be stale, so you see type errors that are already fixed in the tree you run `git pull` in. Often caused by **too many nested `aya-eye` folders** (see above).
 
 **Fix:**
 
-1. **Run both `git pull` and `npm run build` from the app root** — the directory that contains `package.json`, `src/`, and `next.config.ts` (e.g. `~/apps/aya-eye/aya-eye`).
-2. The build script now runs `scripts/ensure-app-root.js` first; if you're in the wrong directory, it will exit with a clear message instead of compiling the wrong tree.
-3. From the correct app root: `git pull origin main`, then `rm -rf .next && npm run build && pm2 restart aya-eye`.
-4. **If the error path is still `./aya-eye/aya-eye/src/...`** after pulling: Next.js may be compiling a different copy. Run `find . -name "route.ts" -path "*carousel*"` from the app root; if you see more than one path, remove or fix the duplicate tree so only one `src/` is used. The repo has `eslint.ignoreDuringBuilds` and `typescript.ignoreBuildErrors` in `next.config.ts` so the build can succeed despite that; run `npm run lint` and fix types locally.
+1. **Remove duplicate nested folders** so you have a single app root (see “Too many nested `aya-eye` folders” above).
+2. **Run both `git pull` and `npm run build` from that app root** — the directory that contains `package.json`, `src/`, and `next.config.ts`.
+3. From the app root: `git pull origin main`, then `rm -rf .next && npm run build && pm2 restart aya-eye`.
 
 ### `EACCES: permission denied` when running `npm install -g pm2`
 

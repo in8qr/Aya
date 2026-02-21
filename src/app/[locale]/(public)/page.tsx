@@ -14,6 +14,11 @@ export default async function HomePage() {
 
   return (
     <>
+      {carouselSlides.length > 0 && (
+        <AnimateInView animation="fade-in-up">
+          <MovingPhotosCarousel slides={carouselSlides} variant="compact" />
+        </AnimateInView>
+      )}
       <HeroAnimated
         tagline={t("tagline")}
         title={t("title")}
@@ -22,11 +27,6 @@ export default async function HomePage() {
         viewPackages={t("viewPackages")}
         imageUrl={heroImageUrl}
       />
-      {carouselSlides.length > 0 && (
-        <AnimateInView animation="fade-in-up">
-          <MovingPhotosCarousel slides={carouselSlides} />
-        </AnimateInView>
-      )}
       <AnimateInView animation="fade-in-up">
         <section className="border-t border-border py-8 sm:py-12 px-3 sm:px-4 text-center">
           <p className="text-xs sm:text-sm text-muted-foreground tracking-wide max-w-xl mx-auto">

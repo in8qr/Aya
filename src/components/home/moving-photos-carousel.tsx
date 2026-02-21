@@ -14,7 +14,13 @@ export type CarouselSlide = {
 const AUTOPLAY_MS = 5000;
 const TRANSITION_MS = 600;
 
-export function MovingPhotosCarousel({ slides }: { slides: CarouselSlide[] }) {
+export function MovingPhotosCarousel({
+  slides,
+  variant = "default",
+}: {
+  slides: CarouselSlide[];
+  variant?: "default" | "compact";
+}) {
   const [index, setIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const len = slides.length;
@@ -42,8 +48,16 @@ export function MovingPhotosCarousel({ slides }: { slides: CarouselSlide[] }) {
 
   if (slides.length === 0) return null;
 
+  const isCompact = variant === "compact";
+  const aspectRatio = isCompact ? "3/1" : "21/9";
+  const sectionClass = isCompact
+    ? "group relative w-full overflow-hidden bg-muted/30 py-4"
+    : "group relative w-full overflow-hidden bg-muted/30";
+  const wrapperClass = isCompact ? "max-w-5xl mx-auto rounded-lg overflow-hidden shadow-lg border border-border/50" : "";
+
   return (
-    <section className="group relative w-full overflow-hidden bg-muted/30">
+    <section className={sectionClass}>
+      <div className={wrapperClass}>
       <div
         className="relative flex transition-transform ease-out will-change-transform"
         style={{
@@ -55,7 +69,7 @@ export function MovingPhotosCarousel({ slides }: { slides: CarouselSlide[] }) {
           <div
             key={slide.id}
             className="relative w-full shrink-0"
-            style={{ aspectRatio: "21/9" }}
+            style={{ aspectRatio }}
           >
             <Image
               src={slide.imageUrl}
@@ -125,6 +139,7 @@ export function MovingPhotosCarousel({ slides }: { slides: CarouselSlide[] }) {
           </button>
         </>
       )}
+      </div>
     </section>
   );
 }
