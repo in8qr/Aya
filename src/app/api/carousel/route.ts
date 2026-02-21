@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { zodErrorToMessage } from "@/lib/zod-error";
 import { z } from "zod";
 
 const createSchema = z.object({
@@ -40,7 +41,7 @@ export async function POST(request: NextRequest) {
   const parsed = createSchema.safeParse(body);
   if (!parsed.success) {
     return NextResponse.json(
-      { error: parsed.error.message },
+      { error: zodErrorToMessage(parsed.error) },
       { status: 400 }
     );
   }

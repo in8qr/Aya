@@ -263,7 +263,13 @@ location / {
 
 ### Build error path shows `./aya-eye/aya-eye/src/...` or build uses old code
 
-- Run `git pull` and `npm run build` from the **same directory** (the one with `package.json`, `src/`, and `.git`). If the error path is nested, the build may be using a different copy. **Fix:** From the app root run `git pull origin main`, then `rm -rf .next && npm run build && pm2 restart aya-eye`.
+**Root cause:** Next.js reports file paths relative to the **current working directory (cwd)** when you run `npm run build`. If the error points at `./aya-eye/aya-eye/src/...`, then cwd is **two levels above** `src/` (e.g. you ran `npm run build` from `~/apps/aya-eye` instead of `~/apps/aya-eye/aya-eye`). The directory that actually gets compiled may be a nested copy that was never updated by `git pull`, so you see type errors (e.g. Zod `flatten().message`) that are already fixed in the repo.
+
+**Fix:**
+
+1. **Run both `git pull` and `npm run build` from the app root** — the directory that contains `package.json`, `src/`, and `next.config.ts` (e.g. `~/apps/aya-eye/aya-eye`).
+2. The build script now runs `scripts/ensure-app-root.js` first; if you're in the wrong directory, it will exit with a clear message instead of compiling the wrong tree.
+3. From the correct app root: `git pull origin main`, then `rm -rf .next && npm run build && pm2 restart aya-eye`.
 
 ### `EACCES: permission denied` when running `npm install -g pm2`
 
