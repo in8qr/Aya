@@ -134,10 +134,10 @@ export default function AdminAppearancePage() {
         body: JSON.stringify({ imageUrl: result.data.url, caption: addSlideCaption.trim() || undefined }),
       });
       if (createRes.ok && createRes.data) {
-        setCarouselSlides((prev) => [...prev, createRes.data!].sort((a, b) => a.sortOrder - b.sortOrder));
+        setCarouselSlides((prev) => [...prev, createRes.data].sort((a, b) => a.sortOrder - b.sortOrder));
         setAddSlideCaption("");
         toast({ title: t("imageSaved") });
-      } else {
+      } else if (!createRes.ok) {
         toast({ title: "Error", description: createRes.error, variant: "destructive" });
       }
     }
