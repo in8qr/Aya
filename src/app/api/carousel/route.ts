@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { zodErrorToMessage } from "@/lib/zod-error";
 import { z } from "zod";
 
 const createSchema = z.object({
@@ -40,10 +39,9 @@ export async function POST(request: NextRequest) {
 
   const parsed = createSchema.safeParse(body);
   if (!parsed.success) {
-    return NextResponse.json(
-      { error: zodErrorToMessage(parsed.error) },
-      { status: 400 }
-    );
+    const err = parsed.error;
+    const message = err instanceof Error ? err.message : String(err);
+    return NextResponse.json({ error: message }, { status: 400 });
   }
 
   const maxOrder = await prisma.homeCarouselSlide.aggregate({
