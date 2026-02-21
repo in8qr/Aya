@@ -1,0 +1,4 @@
+-- AlterTable
+ALTER TABLE "Package" ADD COLUMN IF NOT EXISTS "nameAr" TEXT;
+ALTER TABLE "Package" ADD COLUMN IF NOT EXISTS "descriptionAr" TEXT;
+ALTER TABLE "Package" ADD COLUMN IF NOT EXISTS "deliverablesAr" TEXT;

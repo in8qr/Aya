@@ -63,11 +63,14 @@ model EmailVerificationOtp {
 
 model Package {
   id              String   @id @default(uuid())
-  name            String
+  name            String   // English
+  nameAr          String?  // Arabic
   priceDisplay    String   // SAR only, e.g. "500 SAR" or "1,499 SAR"
   durationMinutes Int
-  description     String?
-  deliverables    String?  // JSON or text list
+  description     String?  // English
+  descriptionAr   String?  // Arabic
+  deliverables    String?  // English (JSON or text list)
+  deliverablesAr  String?  // Arabic
   visible         Boolean  @default(true)
   sortOrder       Int      @default(0)
   createdAt       DateTime @default(now())

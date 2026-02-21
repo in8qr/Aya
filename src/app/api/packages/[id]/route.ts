@@ -6,16 +6,32 @@ import { z } from "zod";
 
 const updateBody = z.object({
   name: z.string().min(1).optional(),
+  nameAr: z.string().nullable().optional(),
   priceDisplay: z.string().min(1).optional(),
   durationMinutes: z.number().int().min(1).optional(),
   description: z.string().optional(),
+  descriptionAr: z.string().nullable().optional(),
   deliverables: z.string().optional(),
+  deliverablesAr: z.string().nullable().optional(),
   visible: z.boolean().optional(),
   sortOrder: z.number().int().optional(),
 });
 
+function localizePackage(
+  pkg: { name: string; nameAr: string | null; description: string | null; descriptionAr: string | null; deliverables: string | null; deliverablesAr: string | null },
+  locale: string
+) {
+  const isAr = locale === "ar";
+  return {
+    ...pkg,
+    name: (isAr && pkg.nameAr) ? pkg.nameAr : pkg.name,
+    description: (isAr && pkg.descriptionAr) ? pkg.descriptionAr : pkg.description,
+    deliverables: (isAr && pkg.deliverablesAr) ? pkg.deliverablesAr : pkg.deliverables,
+  };
+}
+
 export async function GET(
-  _request: NextRequest,
+  request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   const id = (await params).id;
@@ -27,7 +43,9 @@ export async function GET(
   if (!session?.user && !pkg.visible) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
-  return NextResponse.json(pkg);
+  const { searchParams } = new URL(request.url);
+  const locale = (searchParams.get("locale") || "en").toLowerCase() === "ar" ? "ar" : "en";
+  return NextResponse.json(localizePackage(pkg, locale));
 }
 
 export async function PATCH(

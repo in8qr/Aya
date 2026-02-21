@@ -7,24 +7,45 @@ import { logError } from "@/lib/logger";
 
 const createBody = z.object({
   name: z.string().min(1),
+  nameAr: z.string().optional(),
   priceDisplay: z.string().min(1),
   durationMinutes: z.number().int().min(1),
   description: z.string().optional(),
+  descriptionAr: z.string().optional(),
   deliverables: z.string().optional(),
+  deliverablesAr: z.string().optional(),
   visible: z.boolean().optional(),
   sortOrder: z.number().int().optional(),
 });
 
-export async function GET() {
+/** Resolve localized name, description, deliverables for a package. */
+function localizePackage(
+  pkg: { name: string; nameAr: string | null; description: string | null; descriptionAr: string | null; deliverables: string | null; deliverablesAr: string | null },
+  locale: string
+) {
+  const isAr = locale === "ar";
+  return {
+    ...pkg,
+    name: (isAr && pkg.nameAr) ? pkg.nameAr : pkg.name,
+    description: (isAr && pkg.descriptionAr) ? pkg.descriptionAr : pkg.description,
+    deliverables: (isAr && pkg.deliverablesAr) ? pkg.deliverablesAr : pkg.deliverables,
+  };
+}
+
+export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
     const visibleOnly = !session?.user || session.user.role === "CUSTOMER";
+    const { searchParams } = new URL(request.url);
+    const locale = (searchParams.get("locale") || "en").toLowerCase() === "ar" ? "ar" : "en";
 
     const packages = await prisma.package.findMany({
       where: visibleOnly ? { visible: true } : undefined,
       orderBy: [{ sortOrder: "asc" }, { name: "asc" }],
     });
-    return NextResponse.json(packages);
+    const isAdmin = session?.user?.role === "ADMIN";
+    const payload = isAdmin ? packages : packages.map((pkg) => localizePackage(pkg, locale));
+    return NextResponse.json(payload);
   } catch (e) {
     logError("GET /api/packages failed", e);
     return NextResponse.json(

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Link } from "@/i18n/navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { fetchJson } from "@/lib/fetch-safe";
 import { AnimateInView } from "@/components/ui/animate-in-view";
 
@@ -21,13 +21,14 @@ type Package = {
 export default function PackagesPage() {
   const t = useTranslations("packages");
   const tCommon = useTranslations("common");
+  const locale = useLocale();
   const [packages, setPackages] = useState<Package[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     setError(null);
-    fetchJson<Package[]>("/api/packages")
+    fetchJson<Package[]>(`/api/packages?locale=${locale}`)
       .then((result) => {
         if (result.ok) {
           setPackages(Array.isArray(result.data) ? result.data : []);
@@ -37,7 +38,7 @@ export default function PackagesPage() {
         }
       })
       .finally(() => setLoading(false));
-  }, []);
+  }, [locale]);
 
   return (
     <div className="container mx-auto px-3 sm:px-4 max-w-4xl py-10 sm:py-14 md:py-16">
