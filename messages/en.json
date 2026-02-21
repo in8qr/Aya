@@ -196,7 +196,10 @@
     "moveUp": "Move up",
     "moveDown": "Move down",
     "removeSlide": "Remove",
-    "noCarouselSlides": "No slides yet. Add photos below to show a carousel on the homepage."
+    "noCarouselSlides": "No slides yet. Add photos below to show a carousel on the homepage.",
+    "settings": "Settings",
+    "settingsDescription": "Site and email settings. Values here override environment variables.",
+    "settingsSaved": "Settings saved"
   },
   "adminTeam": {
     "addUser": "Add user",
