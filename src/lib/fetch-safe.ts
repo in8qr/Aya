@@ -4,7 +4,7 @@
  */
 
 export type FetchResult<T> =
-  | { ok: true; data: T }
+  | { ok: true; data: T; error?: undefined }
   | { ok: false; error: string; status?: number };
 
 /** Type guard: use so TypeScript narrows FetchResult in else branches. */
