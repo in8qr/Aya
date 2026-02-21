@@ -33,8 +33,8 @@ export default function MyBookingsPage() {
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <PublicHeader />
-      <main className="flex-1 container mx-auto px-4 py-12">
-        <h1 className="font-display text-4xl font-medium tracking-tight mb-6">{t("title")}</h1>
+      <main className="flex-1 container mx-auto px-3 sm:px-4 max-w-4xl py-8 sm:py-10 md:py-12">
+        <h1 className="font-display text-3xl sm:text-4xl font-medium tracking-tight mb-4 sm:mb-6">{t("title")}</h1>
         {loading ? (
           <p className="text-muted-foreground">{t("loading")}</p>
         ) : bookings.length === 0 ? (

@@ -43,12 +43,12 @@ export default function PortfolioPage() {
   const categories = Array.from(new Set(items.map((i) => i.category))).sort();
 
   return (
-    <div className="container mx-auto px-4 py-16">
+    <div className="container mx-auto px-3 sm:px-4 max-w-6xl py-10 sm:py-14 md:py-16">
       <AnimateInView animation="fade-in-up">
-        <h1 className="font-display text-4xl font-medium tracking-tight mb-8">{t("title")}</h1>
+        <h1 className="font-display text-3xl sm:text-4xl md:text-5xl font-medium tracking-tight mb-6 sm:mb-8">{t("title")}</h1>
       </AnimateInView>
       {categories.length > 0 && (
-        <div className="flex gap-2 mb-8 flex-wrap">
+        <div className="flex gap-2 mb-6 sm:mb-8 flex-wrap">
           <button
             onClick={() => setCategory(null)}
             className={cn(
@@ -83,7 +83,7 @@ export default function PortfolioPage() {
       ) : items.length === 0 ? (
         <p className="text-muted-foreground">{t("noPhotos")}</p>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 md:gap-6">
           {items.map((item, i) => (
             <AnimateInView key={item.id} animation="fade-in-up" delay={i * 60}>
               <div className="rounded-lg overflow-hidden border bg-card transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg">

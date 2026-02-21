@@ -3,10 +3,14 @@ import { prisma } from "@/lib/prisma";
 const HERO_IMAGE_KEY = "heroImageUrl";
 
 export async function getHeroImageUrl(): Promise<string | null> {
-  const row = await prisma.siteSetting.findUnique({
-    where: { key: HERO_IMAGE_KEY },
-  });
-  return row?.value ?? null;
+  try {
+    const row = await prisma.siteSetting.findUnique({
+      where: { key: HERO_IMAGE_KEY },
+    });
+    return row?.value ?? null;
+  } catch {
+    return null;
+  }
 }
 
 export async function setHeroImageUrl(url: string | null): Promise<void> {

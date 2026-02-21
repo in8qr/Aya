@@ -30,10 +30,15 @@ export async function middleware(request: NextRequest) {
   const response = nextIntlMiddleware(request);
 
   // Auth checks (path includes locale: /en/admin, /ar/booking, etc.)
-  const token = await getToken({
-    req: request,
-    secret: process.env.NEXTAUTH_SECRET,
-  });
+  let token: { role?: string } | null = null;
+  try {
+    token = await getToken({
+      req: request,
+      secret: process.env.NEXTAUTH_SECRET,
+    });
+  } catch {
+    // Missing NEXTAUTH_SECRET or JWT error: continue without auth
+  }
   const locale = getLocaleFromPath(path);
 
   if (pathNoLocale.startsWith(adminPrefix)) {
