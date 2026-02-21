@@ -52,12 +52,12 @@ export function MovingPhotosCarousel({
   const isHeroOverlay = variant === "heroOverlay";
   const aspectRatio = isHeroOverlay ? undefined : isCompact ? "3/1" : "21/9";
   const sectionClass = isHeroOverlay
-    ? "group absolute inset-x-0 bottom-0 z-10 w-full h-[28vh] min-h-[180px] max-h-[280px] overflow-hidden pointer-events-none [&_.carousel-interactive]:pointer-events-auto"
+    ? "group absolute inset-x-0 bottom-0 z-10 flex justify-center items-end pb-6 sm:pb-8 md:pb-10 pointer-events-none [&_.carousel-interactive]:pointer-events-auto"
     : isCompact
       ? "group relative w-full overflow-hidden bg-muted/30 py-4"
       : "group relative w-full overflow-hidden bg-muted/30";
   const wrapperClass = isHeroOverlay
-    ? "carousel-interactive relative w-full h-full rounded-t-xl overflow-hidden shadow-[0_-4px_24px_rgba(0,0,0,0.4)]"
+    ? "carousel-interactive relative w-[200px] h-[200px] sm:w-[240px] sm:h-[240px] md:w-[280px] md:h-[280px] rounded-2xl overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.4)] ring-2 ring-white/20"
     : isCompact
       ? "max-w-5xl mx-auto rounded-lg overflow-hidden shadow-lg border border-border/50"
       : "";
@@ -66,7 +66,7 @@ export function MovingPhotosCarousel({
     <section className={sectionClass}>
       <div className={wrapperClass}>
       <div
-        className={cn("relative flex transition-transform ease-out will-change-transform", isHeroOverlay && "h-full")}
+        className={cn("relative flex h-full transition-transform ease-out will-change-transform", isHeroOverlay && "w-full")}
         style={{
           transform: `translateX(-${index * 100}%)`,
           transitionDuration: "600ms",
@@ -83,10 +83,10 @@ export function MovingPhotosCarousel({
               alt={slide.caption ?? "Gallery"}
               fill
               className="object-cover"
-              sizes="100vw"
+              sizes={isHeroOverlay ? "280px" : "100vw"}
               priority={slide.sortOrder === 0}
             />
-            {slide.caption && (
+            {slide.caption && !isHeroOverlay && (
               <div
                 className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent px-4 py-6 sm:px-6 sm:py-8"
                 aria-hidden
@@ -103,7 +103,7 @@ export function MovingPhotosCarousel({
       {len > 1 && (
         <>
           {/* Dots */}
-          <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-2 z-10 sm:bottom-4">
+          <div className={cn("absolute bottom-2 left-0 right-0 flex justify-center gap-1.5 z-10", isHeroOverlay && "bottom-2 gap-1")}>
             {slides.map((_, i) => (
               <button
                 key={i}
@@ -114,10 +114,11 @@ export function MovingPhotosCarousel({
                   setIsTransitioning(true);
                 }}
                 className={cn(
-                  "h-2 rounded-full transition-all duration-300",
+                  "rounded-full transition-all duration-300",
+                  isHeroOverlay ? "h-1.5 w-1.5" : "h-2 w-2",
                   i === index
-                    ? "w-6 bg-white shadow-md"
-                    : "w-2 bg-white/50 hover:bg-white/70"
+                    ? (isHeroOverlay ? "w-4 bg-white shadow-md" : "w-6 bg-white shadow-md")
+                    : (isHeroOverlay ? "bg-white/50 hover:bg-white/70" : "bg-white/50 hover:bg-white/70")
                 )}
               />
             ))}
@@ -127,20 +128,26 @@ export function MovingPhotosCarousel({
           <button
             type="button"
             aria-label="Previous"
-            className="absolute left-2 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-black/40 hover:bg-black/60 text-white flex items-center justify-center transition-opacity opacity-70 hover:opacity-100 focus:opacity-100"
+            className={cn(
+              "absolute left-0 top-1/2 -translate-y-1/2 z-10 rounded-full bg-black/50 hover:bg-black/70 text-white flex items-center justify-center transition-opacity opacity-80 hover:opacity-100 focus:opacity-100",
+              isHeroOverlay ? "w-8 h-8 -translate-x-1/2" : "w-10 h-10 left-2"
+            )}
             onClick={() => goTo(-1)}
           >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className={isHeroOverlay ? "w-4 h-4" : "w-5 h-5"} fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
           </button>
           <button
             type="button"
             aria-label="Next"
-            className="absolute right-2 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-black/40 hover:bg-black/60 text-white flex items-center justify-center transition-opacity opacity-70 hover:opacity-100 focus:opacity-100"
+            className={cn(
+              "absolute right-0 top-1/2 -translate-y-1/2 z-10 rounded-full bg-black/50 hover:bg-black/70 text-white flex items-center justify-center transition-opacity opacity-80 hover:opacity-100 focus:opacity-100",
+              isHeroOverlay ? "w-8 h-8 translate-x-1/2" : "w-10 h-10 right-2"
+            )}
             onClick={() => goTo(1)}
           >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className={isHeroOverlay ? "w-4 h-4" : "w-5 h-5"} fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>
           </button>
