@@ -35,7 +35,7 @@ export default function AdminPackagesPage() {
   const { toast } = useToast();
 
   useEffect(() => {
-    fetch("/api/packages")
+    fetch("/api/packages", { cache: "no-store" })
       .then((r) => r.json())
       .then((data) => setPackages(Array.isArray(data) ? data : []))
       .finally(() => setLoading(false));

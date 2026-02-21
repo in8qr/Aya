@@ -58,16 +58,25 @@ export async function PATCH(
   }
 
   const id = (await params).id;
-  const body = await request.json().catch(() => ({}));
+  const body = (await request.json().catch(() => ({}))) as Record<string, unknown>;
   const parsed = updateBody.safeParse(body);
   if (!parsed.success) {
     return NextResponse.json(parsed.error.flatten(), { status: 400 });
   }
 
-  const data: Record<string, unknown> = { ...parsed.data };
-  if (typeof (body as { visible?: unknown }).visible === "boolean") {
-    data.visible = (body as { visible: boolean }).visible;
-  }
+  const raw = parsed.data;
+  const data: Record<string, unknown> = {};
+  if (raw.name !== undefined) data.name = raw.name;
+  if (raw.nameAr !== undefined) data.nameAr = raw.nameAr;
+  if (raw.priceDisplay !== undefined) data.priceDisplay = raw.priceDisplay;
+  if (raw.durationMinutes !== undefined) data.durationMinutes = raw.durationMinutes;
+  if (raw.description !== undefined) data.description = raw.description;
+  if (raw.descriptionAr !== undefined) data.descriptionAr = raw.descriptionAr;
+  if (raw.deliverables !== undefined) data.deliverables = raw.deliverables;
+  if (raw.deliverablesAr !== undefined) data.deliverablesAr = raw.deliverablesAr;
+  if (raw.sortOrder !== undefined) data.sortOrder = raw.sortOrder;
+  if (typeof body.visible === "boolean") data.visible = body.visible;
+  else if (raw.visible !== undefined) data.visible = raw.visible;
 
   const pkg = await prisma.package.update({
     where: { id },

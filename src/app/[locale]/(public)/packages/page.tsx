@@ -1,10 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
 import { Link } from "@/i18n/navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { useTranslations, useLocale } from "next-intl";
+import { useTranslations } from "next-intl";
 import { fetchJson } from "@/lib/fetch-safe";
 import { AnimateInView } from "@/components/ui/animate-in-view";
 
@@ -21,14 +22,16 @@ type Package = {
 export default function PackagesPage() {
   const t = useTranslations("packages");
   const tCommon = useTranslations("common");
-  const locale = useLocale();
+  const params = useParams();
+  const locale = params?.locale === "ar" ? "ar" : "en";
   const [packages, setPackages] = useState<Package[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     setError(null);
-    fetchJson<Package[]>(`/api/packages?locale=${locale}`)
+    setLoading(true);
+    fetchJson<Package[]>(`/api/packages?locale=${locale}`, { cache: "no-store" })
       .then((result) => {
         if (result.ok) {
           setPackages(Array.isArray(result.data) ? result.data : []);
@@ -57,7 +60,7 @@ export default function PackagesPage() {
       ) : packages.length === 0 ? (
         <p className="text-muted-foreground">{t("noPackages")}</p>
       ) : (
-        <div className="grid gap-4 sm:gap-6 sm:grid-cols-2">
+        <div key={locale} className="grid gap-4 sm:gap-6 sm:grid-cols-2">
           {packages.map((pkg, i) => (
             <AnimateInView key={pkg.id} animation="fade-in-up" delay={i * 80}>
               <Card className="border-border bg-card transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg">
