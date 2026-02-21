@@ -158,6 +158,18 @@ model SiteSetting {
   updatedAt DateTime @updatedAt
 }
 
+// Homepage carousel ("moving photos") – admin-managed, ordered slides
+model HomeCarouselSlide {
+  id        String   @id @default(uuid())
+  imageUrl  String
+  caption   String?  // optional short caption overlay
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([sortOrder])
+}
+
 // Portfolio: single list of photos with category and tags (no separate Album entity)
 model PortfolioItem {
   id        String   @id @default(uuid())

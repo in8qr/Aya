@@ -187,7 +187,16 @@
     "capacityOverrides": "Capacity overrides",
     "capacityOverridesDescription": "Override how many confirmed bookings are allowed on a specific day.",
     "teamUnavailability": "Team unavailability",
-    "teamUnavailabilityDescription": "Mark when a team member is unavailable (reduces capacity for that period)."
+    "teamUnavailabilityDescription": "Mark when a team member is unavailable (reduces capacity for that period).",
+    "movingPhotos": "Moving photos (carousel)",
+    "movingPhotosDescription": "Photos shown in a carousel on the homepage. Add, reorder, or remove slides.",
+    "addSlide": "Add slide",
+    "slideCaption": "Caption (optional)",
+    "slideCaptionPlaceholder": "Short caption for this slide",
+    "moveUp": "Move up",
+    "moveDown": "Move down",
+    "removeSlide": "Remove",
+    "noCarouselSlides": "No slides yet. Add photos below to show a carousel on the homepage."
   },
   "adminTeam": {
     "addUser": "Add user",
