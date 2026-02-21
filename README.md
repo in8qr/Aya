@@ -63,6 +63,7 @@ Open http://localhost:3000.
 - **Build:** `npm run build`
 - **Run:** `npm start` or use `pm2 start ecosystem.config.js`
 - Set `NEXTAUTH_URL` and `NEXT_PUBLIC_APP_URL` to your public URL. Put the app behind Nginx or Cloudflare Tunnel for HTTPS.
+- **Full deployment instructions and commands:** [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)
 
 ### Update Linux and redeploy
 
