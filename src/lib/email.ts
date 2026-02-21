@@ -53,7 +53,7 @@ export async function sendAssignmentEmail(params: {
   `;
   const html = wrapEmailContent(content, { title: t.title, dir: locale === "ar" ? "rtl" : "ltr" });
   const subject = t.subject;
-  if (isSmtpConfigured()) {
+  if (await isSmtpConfigured()) {
     await sendMailSmtp({ to, subject, html });
     return;
   }
@@ -125,7 +125,7 @@ export async function sendConfirmationEmail(params: {
     description: `${packageName}, ${dateStr}`,
   });
   const attachments: EmailAttachment[] = [{ filename: "invite.ics", content: ics }];
-  if (isSmtpConfigured()) {
+  if (await isSmtpConfigured()) {
     await sendMailSmtp({ to, subject, html, attachments });
     return;
   }
@@ -164,7 +164,7 @@ export async function sendRejectionEmail(params: {
   `;
   const html = wrapEmailContent(content, { title: t.title, dir: locale === "ar" ? "rtl" : "ltr" });
   const subject = t.subject;
-  if (isSmtpConfigured()) {
+  if (await isSmtpConfigured()) {
     await sendMailSmtp({ to, subject, html });
     return;
   }

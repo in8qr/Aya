@@ -4,6 +4,11 @@ const HERO_IMAGE_KEY = "heroImageUrl";
 const EMAIL_FROM_KEY = "emailFrom";
 const CONTACT_EMAIL_KEY = "contactEmail";
 const APP_URL_KEY = "appUrl";
+const SMTP_HOST_KEY = "smtpHost";
+const SMTP_USER_KEY = "smtpUser";
+const SMTP_PASSWORD_KEY = "smtpPassword";
+const SMTP_PORT_KEY = "smtpPort";
+const SMTP_SECURE_KEY = "smtpSecure";
 
 export async function getHeroImageUrl(): Promise<string | null> {
   try {
@@ -84,9 +89,72 @@ export async function setAppUrl(value: string | null): Promise<void> {
   await setSiteSetting(APP_URL_KEY, value);
 }
 
+/** SMTP: DB overrides env. Used for sending verification and booking emails. */
+export async function getSmtpHost(): Promise<string | null> {
+  const db = await getSiteSetting(SMTP_HOST_KEY);
+  if (db?.trim()) return db.trim();
+  return process.env.SMTP_HOST ?? null;
+}
+
+export async function setSmtpHost(value: string | null): Promise<void> {
+  await setSiteSetting(SMTP_HOST_KEY, value);
+}
+
+export async function getSmtpUser(): Promise<string | null> {
+  const db = await getSiteSetting(SMTP_USER_KEY);
+  if (db?.trim()) return db.trim();
+  return process.env.SMTP_USER ?? null;
+}
+
+export async function setSmtpUser(value: string | null): Promise<void> {
+  await setSiteSetting(SMTP_USER_KEY, value);
+}
+
+export async function getSmtpPassword(): Promise<string | null> {
+  const db = await getSiteSetting(SMTP_PASSWORD_KEY);
+  if (db?.trim()) return db.trim();
+  return process.env.SMTP_PASSWORD ?? null;
+}
+
+export async function setSmtpPassword(value: string | null): Promise<void> {
+  await setSiteSetting(SMTP_PASSWORD_KEY, value);
+}
+
+export async function getSmtpPort(): Promise<number> {
+  const db = await getSiteSetting(SMTP_PORT_KEY);
+  if (db?.trim()) {
+    const n = Number(db);
+    if (!Number.isNaN(n)) return n;
+  }
+  return Number(process.env.SMTP_PORT) || 587;
+}
+
+export async function setSmtpPort(value: string | number | null): Promise<void> {
+  if (value === null || value === "") {
+    await setSiteSetting(SMTP_PORT_KEY, null);
+    return;
+  }
+  await setSiteSetting(SMTP_PORT_KEY, String(value));
+}
+
+export async function getSmtpSecure(): Promise<boolean> {
+  const db = await getSiteSetting(SMTP_SECURE_KEY);
+  if (db !== null && db !== undefined) return db === "true" || db === "1";
+  return process.env.SMTP_SECURE === "true";
+}
+
+export async function setSmtpSecure(value: boolean | null): Promise<void> {
+  await setSiteSetting(SMTP_SECURE_KEY, value === true ? "true" : value === false ? "false" : null);
+}
+
 /** All admin-editable env-like keys and labels. */
 export const SITE_SETTING_KEYS = {
   emailFrom: { label: "Email From (sender for all emails)", placeholder: "Aya Eye <noreply@yoursite.com>" },
   contactEmail: { label: "Contact Email (optional, for footer/contact)", placeholder: "hello@yoursite.com" },
   appUrl: { label: "Site URL (for links in emails)", placeholder: "https://aya.example.com" },
+  smtpHost: { label: "SMTP Host", placeholder: "smtp.gmail.com" },
+  smtpUser: { label: "SMTP Email / Username", placeholder: "your@gmail.com" },
+  smtpPassword: { label: "SMTP Password", placeholder: "Leave blank to keep current" },
+  smtpPort: { label: "SMTP Port", placeholder: "587" },
+  smtpSecure: { label: "SMTP Secure (TLS)", placeholder: "false" },
 } as const;

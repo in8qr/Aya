@@ -199,7 +199,8 @@
     "noCarouselSlides": "لا توجد شرائح بعد. أضف صوراً أدناه لعرض الكرسي على الصفحة الرئيسية.",
     "settings": "الإعدادات",
     "settingsDescription": "إعدادات الموقع والبريد. القيم هنا تتجاوز متغيرات البيئة.",
-    "settingsSaved": "تم حفظ الإعدادات"
+    "settingsSaved": "تم حفظ الإعدادات",
+    "settingsSmtpSection": "SMTP (إرسال البريد)"
   },
   "adminTeam": {
     "addUser": "إضافة مستخدم",
