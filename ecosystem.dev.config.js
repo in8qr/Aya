@@ -1,5 +1,6 @@
-// PM2 config for the development instance (AyaDev branch). Same machine, different port.
-// Use: pm2 start ecosystem.dev.config.js
+// Use this in the dev app directory (AyaDev branch) to run alongside production.
+// Production: ecosystem.config.js (port 3001). Dev: this file (port 3002).
+// Both use the same DATABASE_URL in .env.
 module.exports = {
   apps: [
     {
@@ -13,8 +14,8 @@ module.exports = {
         NODE_ENV: 'production',
         PORT: 3002,
       },
-      error_file: './logs/pm2-dev-error.log',
-      out_file: './logs/pm2-dev-out.log',
+      error_file: './logs/pm2-error.log',
+      out_file: './logs/pm2-out.log',
       log_date_format: 'YYYY-MM-DD HH:mm:ss Z',
       merge_logs: true,
       autorestart: true,

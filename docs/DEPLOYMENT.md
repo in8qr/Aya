@@ -22,12 +22,12 @@ Run these from the **app directory** — the folder that contains `.env`, `packa
 
 ---
 
-## Development app (AyaDev) — same machine, different port and database
+## Development app (AyaDev) — same machine, different port
 
-The **AyaDev** branch runs a separate instance of the app for trying new features. It uses a **different database** and a **different port** (e.g. 3002) so it runs alongside production without touching production data.
+The **AyaDev** branch runs a separate instance of the app for trying new features. It uses the **same database** as production but listens on a **different port** (e.g. 3002).
 
 - **Branch:** `AyaDev`. New features are developed here and merged to `main` when stable.
-- **Deploy:** Use a **second clone** and a **second database**. Set `DEPLOY_BRANCH=AyaDev`, `PORT=3002`, and a different `DATABASE_URL` in the dev clone’s `.env`.
+- **Deploy:** Use the same app directory (or a second clone). Set `DEPLOY_BRANCH=AyaDev` and a different `PORT` for the dev app.
 
 ### Run AyaDev locally
 
@@ -40,77 +40,66 @@ PORT=3002 npm run dev
 
 App will be at `http://localhost:3002` (production remains on 3001 or your usual port).
 
-### Deploy AyaDev next to the existing app (step-by-step)
+### Deploy both apps (production + dev) on the same server, same DB
 
-Both apps run on the same machine: production on port **3001** with its own DB, dev on port **3002** with a **separate** DB.
+Use **two separate app directories**: one for production (from `main`), one for dev (from `AyaDev`). Both point to the **same database** via `DATABASE_URL`.
 
-#### 1. Create a separate database for the dev app
+#### Prerequisites
 
-If you use PostgreSQL on the server:
+- Production app already deployed and running (e.g. `~/aya-eye` or `~/apps/aya-eye`, port 3001, PM2 name `aya-eye`).
+- Same server (same machine).
 
-```bash
-sudo -u postgres psql -c "CREATE USER aya_dev WITH PASSWORD 'your_dev_password';"
-sudo -u postgres psql -c "CREATE DATABASE aya_eye_dev OWNER aya_dev;"
-```
+#### Step 1: Create the dev app directory
 
-Use a different password and DB name if you prefer. The dev app will use this DB only.
-
-#### 2. Create a second clone for the dev app
-
-Use a different directory from the production app (e.g. production in `~/apps/aya-eye`, dev in `~/apps/aya-eye-dev`).
+From a directory where you keep apps (e.g. your home or `~/apps`):
 
 ```bash
-cd ~/apps
 git clone https://github.com/in8qr/Aya.git aya-eye-dev
 cd aya-eye-dev
 git checkout AyaDev
 ```
 
-#### 3. Configure the dev app’s environment
+Use a different folder name than production (e.g. `aya-eye-dev` vs `aya-eye`) so the two installs don’t overwrite each other.
 
-Copy the production `.env` and then change **port**, **database URL**, and optionally **app URL** so dev stays separate:
+#### Step 2: Use the same .env for dev (same DB, different port)
+
+Copy the production `.env` into the dev directory so both use the same database:
 
 ```bash
-cp .env.example .env
-nano .env
+cp /path/to/aya-eye/.env .env
 ```
 
-Set at least:
+Edit the dev `.env` and set:
 
-- **`PORT=3002`** — so the dev app does not conflict with production (3001).
-- **`DATABASE_URL`** — point to the **dev** database, e.g.  
-  `postgresql://aya_dev:your_dev_password@localhost:5432/aya_eye_dev`  
-  (Do **not** use the production DB URL here.)
-- **`NEXTAUTH_URL`** — dev URL, e.g. `https://dev.yourdomain.com` or `https://yourdomain.com` (if you use the same domain with a different port or path, adjust as needed).
-- **`NEXT_PUBLIC_APP_URL`** — same as `NEXTAUTH_URL` for the dev app.
-- **`NEXTAUTH_SECRET`** — use a **different** secret from production (e.g. `openssl rand -base64 32`).
+- **PORT=3002** (so the dev app listens on 3002 instead of 3001).
+- Keep **DATABASE_URL** exactly the same as production (same DB).
+- Keep **NEXTAUTH_URL** and **NEXT_PUBLIC_APP_URL** for the **production** site (e.g. `https://yourdomain.com`). For testing the dev app you’ll use `http://server-ip:3002` or a dev subdomain; no need to change these unless you want dev-specific auth URLs.
 
-Keep or adjust SMTP, S3, Resend, etc. as needed for dev (can be same or different).
+Save and close.
 
-#### 4. Install dependencies, apply schema, seed, and build
+#### Step 3: Deploy the dev app (install, schema, build)
 
-From the **dev app directory** (`~/apps/aya-eye-dev`):
+From the **dev** directory:
 
 ```bash
-cd ~/apps/aya-eye-dev
-npm ci
-npx prisma generate
-npx prisma db push
-npm run db:seed
-npm run build
+cd ~/aya-eye-dev   # or your dev path
+chmod +x scripts/deploy.sh
+DEPLOY_BRANCH=AyaDev ./scripts/deploy.sh
 ```
 
-#### 5. Start the dev app with PM2
+This pulls `AyaDev`, runs `npm ci`, `prisma generate`, `prisma db push`, `npm run build`. The schema is shared, so `db push` is safe (it only adds new columns/tables if any).
 
-The repo includes `ecosystem.dev.config.js`, which runs the app as `aya-eye-dev` on port 3002:
+#### Step 4: Start the dev app with PM2
+
+Use the dev PM2 config (port 3002, name `aya-eye-dev`):
 
 ```bash
-cd ~/apps/aya-eye-dev
+cd ~/aya-eye-dev
 pm2 start ecosystem.dev.config.js
 pm2 save
 ```
 
-Check both apps:
+Check both:
 
 ```bash
 pm2 status
@@ -118,73 +107,29 @@ pm2 status
 
 You should see `aya-eye` (port 3001) and `aya-eye-dev` (port 3002).
 
-#### 6. Point the dev app in Nginx (or your reverse proxy)
+#### Step 5: Expose the dev app (optional)
 
-Add a server block for the dev app, for example:
+- **Same machine, direct access:** Open `http://YOUR_SERVER_IP:3002` in the browser.
+- **Via Nginx:** Add a server block that proxies to `127.0.0.1:3002` (e.g. `dev.yourdomain.com`).
 
-- **Subdomain:** `dev.yourdomain.com` → proxy to `http://127.0.0.1:3002`
-- **Or path / port:** same domain with a different port or path, depending on your setup.
+---
 
-Example (subdomain):
+### Redeploy the dev app later
 
-```nginx
-server {
-    listen 443 ssl;
-    server_name dev.yourdomain.com;
-    # ... ssl_certificate, etc. ...
-
-    location / {
-        proxy_pass http://127.0.0.1:3002;
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection 'upgrade';
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-        proxy_cache_bypass $http_upgrade;
-    }
-}
-```
-
-Reload Nginx: `sudo nginx -t && sudo systemctl reload nginx`.
-
-#### 7. Redeploy the dev app (after code changes)
-
-From the dev clone, pull the **AyaDev** branch and rebuild:
+After code changes on `AyaDev`:
 
 ```bash
-cd ~/apps/aya-eye-dev
-git fetch origin AyaDev
-git reset --hard origin/AyaDev
-npm ci
-npx prisma generate
-npx prisma db push
-npm run build
-pm2 restart aya-eye-dev
-```
-
-Or use the deploy script with the dev branch:
-
-```bash
-cd ~/apps/aya-eye-dev
+cd ~/aya-eye-dev
 DEPLOY_BRANCH=AyaDev ./scripts/deploy.sh
-```
-
-Then restart the dev process:
-
-```bash
 pm2 restart aya-eye-dev
 ```
 
 ### Summary
 
-| App        | Branch  | Port | Database      | PM2 name     |
-|-----------|---------|------|---------------|--------------|
-| Production| `main`  | 3001 | e.g. `aya_eye`    | `aya-eye`    |
-| Dev       | `AyaDev`| 3002 | e.g. `aya_eye_dev`| `aya-eye-dev`|
-
-Each app uses its **own database**; they do not share data.
+| App        | Directory     | Branch  | Port | PM2 name      | DB        |
+|-----------|---------------|---------|------|---------------|-----------|
+| Production| e.g. `aya-eye`| `main`  | 3001 | `aya-eye`     | shared    |
+| Dev       | e.g. `aya-eye-dev` | `AyaDev` | 3002 | `aya-eye-dev` | same DB   |
 
 ---
 
