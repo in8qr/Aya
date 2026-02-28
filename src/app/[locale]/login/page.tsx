@@ -45,6 +45,7 @@ function LoginForm() {
         return;
       }
       if (res?.ok) {
+        // Session may not be available immediately after signIn; redirect so the next full page load sends the cookie
         const session = await getSession();
         const role = session?.user?.role;
         let target: string;
@@ -52,7 +53,7 @@ function LoginForm() {
         else if (role === "TEAM") target = `/${locale}/team`;
         else if (callbackUrl === "/" || callbackUrl === "") target = `/${locale}`;
         else if (/^\/(en|ar)\b/.test(callbackUrl)) target = callbackUrl;
-        else target = `/${locale}${callbackUrl}`;
+        else target = callbackUrl.startsWith("/") ? `/${locale}${callbackUrl}` : `/${locale}/${callbackUrl}`;
         window.location.href = target;
       }
     } catch {

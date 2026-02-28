@@ -25,12 +25,29 @@ declare module "next-auth/jwt" {
   }
 }
 
+// Use a different cookie name when running the dev app (port 3002) so it doesn't conflict with production
+const isDevApp = process.env.PORT === "3002";
+const sessionTokenName = isDevApp ? "next-auth.session-token.dev" : undefined;
+
 export const authOptions: NextAuthOptions = {
   // 5 minutes inactivity: session expires 5 min after last activity (each request refreshes it)
   session: { strategy: "jwt", maxAge: 5 * 60 },
   pages: {
     signIn: "/login",
   },
+  ...(sessionTokenName && {
+    cookies: {
+      sessionToken: {
+        name: sessionTokenName,
+        options: {
+          httpOnly: true,
+          sameSite: "lax",
+          path: "/",
+          secure: process.env.NEXTAUTH_URL?.startsWith("https:") ?? false,
+        },
+      },
+    },
+  }),
   providers: [
     CredentialsProvider({
       name: "credentials",

@@ -63,19 +63,30 @@ Use a different folder name than production (e.g. `aya-eye-dev` vs `aya-eye`) so
 
 #### Step 2: Use the same .env for dev (same DB, different port)
 
-Copy the production `.env` into the dev directory so both use the same database:
+**Important:** The dev app must use the **exact same `DATABASE_URL`** as production. If it doesn’t, the dev app will show empty or different data (packages, photos, users, etc.).
+
+Copy the production `.env` into the dev directory:
 
 ```bash
-cp /path/to/aya-eye/.env .env
+# Replace with your real production app path
+cp /path/to/aya-eye/.env /home/ms/apps/ayadev/aya-eye-dev/.env
 ```
 
-Edit the dev `.env` and set:
+Then edit the **dev** `.env` and set:
 
 - **PORT=3002** (so the dev app listens on 3002 instead of 3001).
 - Keep **DATABASE_URL** exactly the same as production (same DB).
-- Keep **NEXTAUTH_URL** and **NEXT_PUBLIC_APP_URL** for the **production** site (e.g. `https://yourdomain.com`). For testing the dev app you’ll use `http://server-ip:3002` or a dev subdomain; no need to change these unless you want dev-specific auth URLs.
+- **NEXTAUTH_URL** and **NEXT_PUBLIC_APP_URL** must be the URL you use to open the **dev** app, or login will not work (session cookie / redirect mismatch). Examples:
+  - If you open the dev app at `http://YOUR_SERVER_IP:3002`, set:
+    - `NEXTAUTH_URL=http://YOUR_SERVER_IP:3002`
+    - `NEXT_PUBLIC_APP_URL=http://YOUR_SERVER_IP:3002`
+  - If you use a subdomain (e.g. Nginx proxy), set `https://dev.yourdomain.com` for both.
 
 Save and close.
+
+**Why:** NextAuth uses `NEXTAUTH_URL` for redirects and cookie behavior. If it points to production while you’re on port 3002, the login form may submit but the session won’t stick and “nothing happens” after login.
+
+After changing `.env`, restart the dev app. If you changed `NEXT_PUBLIC_APP_URL`, run `npm run build` first, then `pm2 restart aya-eye-dev`.
 
 #### Step 3: Deploy the dev app (install, schema, build)
 
@@ -111,6 +122,41 @@ You should see `aya-eye` (port 3001) and `aya-eye-dev` (port 3002).
 
 - **Same machine, direct access:** Open `http://YOUR_SERVER_IP:3002` in the browser.
 - **Via Nginx:** Add a server block that proxies to `127.0.0.1:3002` (e.g. `dev.yourdomain.com`).
+
+---
+
+### Dev app shows different data (not same DB)
+
+If the dev app looks like a fresh install (no packages, different photos, etc.), it is almost certainly using a **different database** than production.
+
+**1. Compare `DATABASE_URL` on both apps**
+
+```bash
+# Production app – note the value (replace path with yours)
+grep DATABASE_URL /home/ms/apps/aya-eye/.env
+# or wherever your main app lives, e.g. ~/aya-eye/.env
+
+# Dev app
+grep DATABASE_URL /home/ms/apps/ayadev/aya-eye-dev/.env
+```
+
+The two values must be **identical** (same host, port, database name, user, password).
+
+**2. Point dev at the production DB**
+
+Copy the production `DATABASE_URL` line into the dev `.env` (replace the existing one), then restart:
+
+```bash
+cd /home/ms/apps/ayadev/aya-eye-dev
+# Edit .env and set DATABASE_URL to the same as production, then:
+pm2 restart aya-eye-dev
+```
+
+No need to rebuild when only `DATABASE_URL` (or other non-`NEXT_PUBLIC_*`) vars change.
+
+**3. Optional: confirm both apps use the same DB**
+
+After fixing `DATABASE_URL`, open the dev app in the browser. You should see the same packages, photos, and (after logging in) the same admin data as on the main site. Or run `npx prisma studio` from the dev directory and confirm you see the same rows as on production.
 
 ---
 

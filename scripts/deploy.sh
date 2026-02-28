@@ -72,8 +72,12 @@ npx prisma generate || error "Failed to generate Prisma Client"
 # Sync database schema. Try migrations first; if that fails (e.g. P3005 when DB was created with db push), use db push.
 if [ -d "prisma/migrations" ] && [ -n "$(ls -A prisma/migrations 2>/dev/null)" ]; then
   log "Running database migrations..."
-  if ! npx prisma migrate deploy; then
-    log "Migrations not applicable (e.g. DB was set up with db push). Syncing schema with db push..."
+  set +e  # do not exit on migrate failure (P3005 = non-empty DB without migration history)
+  npx prisma migrate deploy 2>&1 | tee -a "$LOG_FILE"
+  MIGRATE_EXIT=${PIPESTATUS[0]}
+  set -e
+  if [ "$MIGRATE_EXIT" -ne 0 ]; then
+    log "Migrations not applicable (e.g. P3005: DB was set up with db push). Syncing schema with db push..."
     npx prisma db push --accept-data-loss=false || warning "Database schema sync had issues"
   fi
 else
