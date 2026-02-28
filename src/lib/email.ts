@@ -174,3 +174,34 @@ export async function sendRejectionEmail(params: {
   const { error } = await resend.emails.send({ from, to: [to], subject, html });
   if (error) throw new Error(JSON.stringify(error));
 }
+
+export async function sendResultsReadyEmail(params: {
+  to: string;
+  customerName: string;
+  packageName: string;
+  resultsPassword: string;
+  bookingsUrl: string;
+  locale?: EmailLocale;
+}) {
+  const { to, customerName, packageName, resultsPassword, bookingsUrl, locale = "en" } = params;
+  const t = getEmailCopy(locale).resultsReady;
+  const content = `
+    <p style="${emailStyles.body}">Hi ${escapeHtml(customerName)},</p>
+    <p style="${emailStyles.body}">${t.body}</p>
+    <p style="${emailStyles.body}"><strong style="${emailStyles.strong}">${escapeHtml(packageName)}</strong></p>
+    <p style="${emailStyles.body}"><a href="${escapeHtml(bookingsUrl)}" style="${emailStyles.link}">${t.viewBookings}</a></p>
+    <p style="${emailStyles.body}; margin-top:20px;">${t.passwordNote}</p>
+    <p style="${emailStyles.body}"><strong style="${emailStyles.strong}">${t.passwordLabel}:</strong> <code style="background:#f0f0f0;padding:4px 8px;border-radius:4px;">${escapeHtml(resultsPassword)}</code></p>
+  `;
+  const html = wrapEmailContent(content, { title: t.title, dir: locale === "ar" ? "rtl" : "ltr" });
+  const subject = t.subject;
+  if (await isSmtpConfigured()) {
+    await sendMailSmtp({ to, subject, html });
+    return;
+  }
+  const resend = getResend();
+  if (!resend) return;
+  const from = await getEmailFrom();
+  const { error } = await resend.emails.send({ from, to: [to], subject, html });
+  if (error) throw new Error(JSON.stringify(error));
+}

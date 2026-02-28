@@ -22,7 +22,10 @@ export async function GET(
   if (!booking) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
-  if (session.user.role !== "ADMIN") {
+  const canView =
+    session.user.role === "ADMIN" ||
+    (session.user.role === "TEAM" && booking.assignedTeamId === session.user.id);
+  if (!canView) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
@@ -38,7 +41,7 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const session = await getServerSession(authOptions);
-  if (!session?.user?.id || session.user.role !== "ADMIN") {
+  if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -51,6 +54,7 @@ export async function POST(
   const formData = await request.formData();
   const name = formData.get("name") as string | null;
   const file = formData.get("file") as File | null;
+  const typeParam = formData.get("type") as string | null;
   if (!name?.trim()) {
     return NextResponse.json({ error: "Missing attachment name" }, { status: 400 });
   }
@@ -58,9 +62,24 @@ export async function POST(
     return NextResponse.json({ error: "Missing file" }, { status: 400 });
   }
 
+  const isAdmin = session.user.role === "ADMIN";
+  const isAssignedTeam = session.user.role === "TEAM" && booking.assignedTeamId === session.user.id;
+  const attachmentType = typeParam === "SESSION_RESULT" ? "SESSION_RESULT" : "RECEIPT";
+
+  if (attachmentType === "SESSION_RESULT") {
+    if (!isAssignedTeam) {
+      return NextResponse.json({ error: "Only the assigned team member can upload session results." }, { status: 403 });
+    }
+  } else {
+    if (!isAdmin) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+  }
+
   const buffer = Buffer.from(await file.arrayBuffer());
   const ext = file.name.split(".").pop() ?? "pdf";
-  const key = `receipts/${id}/${Date.now()}-${name.replace(/\W/g, "_")}.${ext}`;
+  const prefix = attachmentType === "SESSION_RESULT" ? "receipts/session-results" : "receipts";
+  const key = `${prefix}/${id}/${Date.now()}-${name.replace(/\W/g, "_")}.${ext}`;
 
   if (isS3Configured()) {
     await uploadReceiptFile(key, buffer, file.type || "application/octet-stream");
@@ -71,7 +90,7 @@ export async function POST(
   const attachment = await prisma.attachment.create({
     data: {
       bookingId: id,
-      type: "RECEIPT",
+      type: attachmentType,
       name: name.trim(),
       fileUrl: key,
       uploadedById: session.user.id,

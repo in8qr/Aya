@@ -54,7 +54,8 @@ export async function GET() {
       assignedTeam: { select: { id: true, name: true } },
     },
   });
-  return NextResponse.json(bookings);
+  const safe = bookings.map(({ resultsPasswordHash: _, ...b }) => b);
+  return NextResponse.json(safe);
 }
 
 export async function POST(request: NextRequest) {

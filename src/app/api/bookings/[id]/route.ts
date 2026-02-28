@@ -9,6 +9,9 @@ import { logError } from "@/lib/logger";
 
 const assignBody = z.object({ assignedTeamId: z.string().uuid().nullable() });
 const rejectBody = z.object({ reason: z.string().max(2000).optional() });
+const sessionStatusBody = z.object({
+  sessionStatus: z.enum(["BOOKED", "IN_PROGRESS", "WAITING_RESULTS", "COMPLETED"]),
+});
 
 export async function GET(
   _request: NextRequest,
@@ -41,9 +44,9 @@ export async function GET(
     return NextResponse.json(booking);
   }
   if (booking.customerId === session.user.id) {
-    const { attachments, ...rest } = booking;
-    void attachments; // exclude from response for customer
-    return NextResponse.json({ ...rest, attachments: undefined });
+    const { attachments, resultsPasswordHash, ...rest } = booking;
+    void attachments;
+    return NextResponse.json({ ...rest, attachments: undefined, resultsPasswordHash: undefined });
   }
 
   return NextResponse.json({ error: "Forbidden" }, { status: 403 });
@@ -54,7 +57,7 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const session = await getServerSession(authOptions);
-  if (!session?.user?.id || session.user.role !== "ADMIN") {
+  if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -70,6 +73,35 @@ export async function PATCH(
 
   if (!booking) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
+  }
+
+  // Assigned team member can update customer-facing session status only
+  if (session.user.role === "TEAM" && booking.assignedTeamId === session.user.id) {
+    let body: unknown;
+    try {
+      body = await request.json();
+    } catch {
+      return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
+    }
+    const parsed = sessionStatusBody.safeParse(body);
+    if (parsed.success) {
+      const updated = await prisma.booking.update({
+        where: { id },
+        data: { sessionStatus: parsed.data.sessionStatus },
+        include: {
+          customer: true,
+          package: true,
+          assignedTeam: true,
+          attachments: true,
+        },
+      });
+      return NextResponse.json(updated);
+    }
+    return NextResponse.json({ error: "Bad request" }, { status: 400 });
+  }
+
+  if (session.user.role !== "ADMIN") {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   let body: unknown;

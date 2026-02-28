@@ -128,7 +128,19 @@
     },
     "requestNewBooking": "Request a new booking",
     "photographer": "Photographer",
-    "locationLabel": "Location"
+    "locationLabel": "Location",
+    "sessionStatus": {
+      "BOOKED": "Booked",
+      "IN_PROGRESS": "In progress",
+      "WAITING_RESULTS": "Waiting results",
+      "COMPLETED": "Completed"
+    },
+    "viewResults": "View results",
+    "resultsPassword": "Results password",
+    "resultsPasswordPlaceholder": "Enter password",
+    "submitPassword": "View my results",
+    "wrongPassword": "Incorrect password. Please try again.",
+    "noResultsYet": "Results are not available yet."
   },
   "auth": {
     "login": "Log in",
@@ -238,7 +250,21 @@
   "team": {
     "myBookings": "My bookings",
     "assignedBookings": "Assigned bookings",
-    "addToCalendar": "Add to phone calendar"
+    "addToCalendar": "Add to phone calendar",
+    "sessionStatus": "Session status (customer view)",
+    "sessionStatusHelp": "Set how the customer sees this booking.",
+    "uploadSessionResults": "Upload session results",
+    "uploadSessionResultsHelp": "Upload photos and videos from this session. The customer will access them with a password.",
+    "resultsPassword": "Results password",
+    "resultsPasswordHelp": "Set a password for the customer to view results. Required before notifying.",
+    "allUploadedNotifyCustomer": "All uploaded, notify customer",
+    "notifyCustomerHelp": "Sends an email to the customer with a link to My Bookings and the results password.",
+    "notifySuccess": "Customer notified.",
+    "notifyError": "Could not send notification. Check password is set and at least one result is uploaded.",
+    "addResult": "Add photo/video",
+    "resultName": "Title",
+    "noResultsUploaded": "No session results uploaded yet.",
+    "manageSessionResults": "Manage session & results"
   },
   "adminBooking": {
     "assign": "Assign",

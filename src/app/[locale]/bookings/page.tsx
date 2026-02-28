@@ -12,6 +12,7 @@ type Booking = {
   startAt: string;
   durationMinutes: number;
   status: string;
+  sessionStatus?: string;
   location: string | null;
   package: { name: string };
   assignedTeam?: { name: string } | null;
@@ -46,7 +47,7 @@ export default function MyBookingsPage() {
                 <CardHeader className="flex flex-row items-center justify-between">
                   <CardTitle className="text-lg">{b.package.name}</CardTitle>
                   <span className="text-sm font-normal text-muted-foreground">
-                    {t(`status.${b.status}` as `status.${string}`) ?? b.status}
+                    {t(`sessionStatus.${b.sessionStatus ?? "BOOKED"}` as `sessionStatus.${string}`) ?? b.sessionStatus ?? "—"}
                   </span>
                 </CardHeader>
                 <CardContent>
@@ -65,6 +66,11 @@ export default function MyBookingsPage() {
                   )}
                   {b.location && (
                     <p className="text-sm text-muted-foreground">{t("locationLabel")}: {b.location}</p>
+                  )}
+                  {b.sessionStatus === "COMPLETED" && (
+                    <Link href={`/bookings/${b.id}/results`} className="inline-block mt-3">
+                      <Button variant="secondary" size="sm">{t("viewResults")}</Button>
+                    </Link>
                   )}
                 </CardContent>
               </Card>

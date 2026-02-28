@@ -16,6 +16,14 @@ const copy: Record<
       changeNote: string;
     };
     rejection: { subject: string; title: string; body: string };
+    resultsReady: {
+      subject: string;
+      title: string;
+      body: string;
+      viewBookings: string;
+      passwordLabel: string;
+      passwordNote: string;
+    };
   }
 > = {
   en: {
@@ -45,6 +53,14 @@ const copy: Record<
       title: "Booking not confirmed",
       body: "Unfortunately we could not confirm your booking. If you have questions, please contact us.",
     },
+    resultsReady: {
+      subject: "Your photo session results are ready – Aya Eye",
+      title: "Session results ready",
+      body: "Your photo session results have been uploaded and are ready to view.",
+      viewBookings: "View my bookings",
+      passwordLabel: "Results password",
+      passwordNote: "Use the password below to view your results when you open your completed booking.",
+    },
   },
   ar: {
     otp: {
@@ -72,6 +88,14 @@ const copy: Record<
       subject: "تحديث الحجز – Aya Eye",
       title: "لم يتم تأكيد الحجز",
       body: "للأسف لم نتمكن من تأكيد حجزك. إن كان لديك استفسارات، يرجى التواصل معنا.",
+    },
+    resultsReady: {
+      subject: "نتائج جلسة التصوير جاهزة – Aya Eye",
+      title: "نتائج الجلسة جاهزة",
+      body: "تم رفع نتائج جلسة التصوير وهي جاهزة للمشاهدة.",
+      viewBookings: "عرض حجوزاتي",
+      passwordLabel: "كلمة مرور النتائج",
+      passwordNote: "استخدم كلمة المرور أدناه لعرض النتائج عند فتح الحجز المكتمل.",
     },
   },
 };

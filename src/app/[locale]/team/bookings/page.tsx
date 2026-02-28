@@ -4,14 +4,16 @@ import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import { downloadICS } from "@/lib/ics";
-import { CalendarPlus } from "lucide-react";
+import { CalendarPlus, ChevronRight } from "lucide-react";
 
 type Booking = {
   id: string;
   startAt: string;
   durationMinutes: number;
   status: string;
+  sessionStatus?: string;
   location: string | null;
   notes: string | null;
   customer: { name: string; email: string; phone: string | null };
@@ -52,13 +54,19 @@ export default function TeamBookingsPage() {
                 {b.customer.phone && <p className="text-sm">Phone: {b.customer.phone}</p>}
                 {b.location && <p className="text-sm">{tBookings("locationLabel")}: {b.location}</p>}
                 {b.notes && <p className="text-sm text-muted-foreground">Notes: {b.notes}</p>}
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  className="mt-2"
-                  onClick={() =>
-                    downloadICS({
+                <div className="flex flex-wrap gap-2 mt-2">
+                  <Link href={`/team/bookings/${b.id}`}>
+                    <Button type="button" variant="default" size="sm">
+                      {t("manageSessionResults")}
+                      <ChevronRight className="h-4 w-4 ml-1" />
+                    </Button>
+                  </Link>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() =>
+                      downloadICS({
                       title: `${b.package.name} – ${b.customer.name}`,
                       startAt: b.startAt,
                       durationMinutes: b.durationMinutes,
@@ -68,10 +76,11 @@ export default function TeamBookingsPage() {
                         : `Customer: ${b.customer.name}`,
                     })
                   }
-                >
-                  <CalendarPlus className="h-4 w-4 mr-2" />
-                  {t("addToCalendar")}
-                </Button>
+                  >
+                    <CalendarPlus className="h-4 w-4 mr-2" />
+                    {t("addToCalendar")}
+                  </Button>
+                </div>
               </CardContent>
             </Card>
           ))}

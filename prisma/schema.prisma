@@ -26,8 +26,17 @@ enum BookingStatus {
   NOSHOW
 }
 
+// Customer-facing session status (set by assigned team member)
+enum SessionStatus {
+  BOOKED
+  IN_PROGRESS
+  WAITING_RESULTS
+  COMPLETED
+}
+
 enum AttachmentType {
   RECEIPT
+  SESSION_RESULT
 }
 
 model User {
@@ -80,18 +89,21 @@ model Package {
 }
 
 model Booking {
-  id              String        @id @default(uuid())
-  customerId      String
-  packageId       String
-  assignedTeamId  String?
-  startAt        DateTime
-  durationMinutes Int
-  status         BookingStatus @default(PENDING_REVIEW)
-  location       String?
-  notes          String?
-  customerLocale String?       // en | ar — app language at booking time (for confirmation/rejection email)
-  createdAt      DateTime      @default(now())
-  updatedAt      DateTime      @updatedAt
+  id                   String         @id @default(uuid())
+  customerId           String
+  packageId            String
+  assignedTeamId       String?
+  startAt              DateTime
+  durationMinutes      Int
+  status               BookingStatus  @default(PENDING_REVIEW)
+  sessionStatus        SessionStatus  @default(BOOKED) // customer-facing; set by assigned team
+  resultsPasswordHash  String?        // bcrypt; set by team when notifying customer
+  resultsNotifiedAt    DateTime?      // when "all uploaded, notify customer" was sent
+  location             String?
+  notes                String?
+  customerLocale       String?        // en | ar — app language at booking time (for confirmation/rejection email)
+  createdAt            DateTime       @default(now())
+  updatedAt            DateTime       @updatedAt
 
   customer   User   @relation("CustomerBookings", fields: [customerId], references: [id], onDelete: Cascade)
   package    Package @relation(fields: [packageId], references: [id], onDelete: Restrict)
@@ -102,6 +114,7 @@ model Booking {
   @@index([customerId])
   @@index([assignedTeamId])
   @@index([status])
+  @@index([sessionStatus])
 }
 
 model Attachment {

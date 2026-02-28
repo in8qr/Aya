@@ -128,7 +128,19 @@
     },
     "requestNewBooking": "طلب حجز جديد",
     "photographer": "المصور",
-    "locationLabel": "المكان"
+    "locationLabel": "المكان",
+    "sessionStatus": {
+      "BOOKED": "محجوز",
+      "IN_PROGRESS": "قيد التنفيذ",
+      "WAITING_RESULTS": "بانتظار النتائج",
+      "COMPLETED": "مكتمل"
+    },
+    "viewResults": "عرض النتائج",
+    "resultsPassword": "كلمة مرور النتائج",
+    "resultsPasswordPlaceholder": "أدخل كلمة المرور",
+    "submitPassword": "عرض نتائجي",
+    "wrongPassword": "كلمة المرور غير صحيحة. يرجى المحاولة مرة أخرى.",
+    "noResultsYet": "النتائج غير متاحة بعد."
   },
   "auth": {
     "login": "تسجيل الدخول",
@@ -238,7 +250,21 @@
   "team": {
     "myBookings": "حجوزاتي",
     "assignedBookings": "الحجوزات المعينة لي",
-    "addToCalendar": "إضافة إلى تقويم الجوال"
+    "addToCalendar": "إضافة إلى تقويم الجوال",
+    "sessionStatus": "حالة الجلسة (عرض العميل)",
+    "sessionStatusHelp": "حدد كيف يرى العميل هذا الحجز.",
+    "uploadSessionResults": "رفع نتائج الجلسة",
+    "uploadSessionResultsHelp": "ارفع الصور والفيديوهات من هذه الجلسة. سيتاح للعميل الوصول إليها بكلمة مرور.",
+    "resultsPassword": "كلمة مرور النتائج",
+    "resultsPasswordHelp": "حدد كلمة مرور للعميل لعرض النتائج. مطلوبة قبل الإشعار.",
+    "allUploadedNotifyCustomer": "تم الرفع، إشعار العميل",
+    "notifyCustomerHelp": "يرسل بريداً للعميل يحتوي على رابط حجوزاتي وكلمة مرور النتائج.",
+    "notifySuccess": "تم إشعار العميل.",
+    "notifyError": "تعذر إرسال الإشعار. تأكد من تعيين كلمة المرور ورفع نتيجة واحدة على الأقل.",
+    "addResult": "إضافة صورة/فيديو",
+    "resultName": "العنوان",
+    "noResultsUploaded": "لم يتم رفع نتائج الجلسة بعد.",
+    "manageSessionResults": "إدارة الجلسة والنتائج"
   },
   "adminBooking": {
     "assign": "تعيين",
