@@ -79,22 +79,22 @@ Save and close.
 
 #### Step 3: Deploy the dev app (install, schema, build)
 
-From the **dev** directory:
+From **your dev directory** (e.g. `~/apps/ayadev/aya-eye-dev` or `~/aya-eye-dev`):
 
 ```bash
-cd ~/aya-eye-dev   # or your dev path
+cd /home/ms/apps/ayadev/aya-eye-dev   # use your actual dev path
 chmod +x scripts/deploy.sh
 DEPLOY_BRANCH=AyaDev ./scripts/deploy.sh
 ```
 
-This pulls `AyaDev`, runs `npm ci`, `prisma generate`, `prisma db push`, `npm run build`. The schema is shared, so `db push` is safe (it only adds new columns/tables if any).
+This pulls `AyaDev`, runs `npm ci`, `prisma generate`, schema sync (migrations or `db push` fallback), then `npm run build`. If the database was set up with `db push` (e.g. shared with production), the script will use `db push` when migrations are not applicable.
 
 #### Step 4: Start the dev app with PM2
 
-Use the dev PM2 config (port 3002, name `aya-eye-dev`):
+Use the dev PM2 config (port 3002, name `aya-eye-dev`). Run from **your dev directory**:
 
 ```bash
-cd ~/aya-eye-dev
+cd /home/ms/apps/ayadev/aya-eye-dev   # use your actual dev path
 pm2 start ecosystem.dev.config.js
 pm2 save
 ```
@@ -116,10 +116,10 @@ You should see `aya-eye` (port 3001) and `aya-eye-dev` (port 3002).
 
 ### Redeploy the dev app later
 
-After code changes on `AyaDev`:
+After code changes on `AyaDev`, from your dev directory:
 
 ```bash
-cd ~/aya-eye-dev
+cd /home/ms/apps/ayadev/aya-eye-dev   # use your actual dev path
 DEPLOY_BRANCH=AyaDev ./scripts/deploy.sh
 pm2 restart aya-eye-dev
 ```

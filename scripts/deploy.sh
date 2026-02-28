@@ -69,10 +69,13 @@ npm ci || error "Failed to install dependencies"
 log "Generating Prisma Client..."
 npx prisma generate || error "Failed to generate Prisma Client"
 
-# Sync database schema (use migrations if present, otherwise db push for existing DBs)
+# Sync database schema. Try migrations first; if that fails (e.g. P3005 when DB was created with db push), use db push.
 if [ -d "prisma/migrations" ] && [ -n "$(ls -A prisma/migrations 2>/dev/null)" ]; then
   log "Running database migrations..."
-  npx prisma migrate deploy || warning "Migration failed"
+  if ! npx prisma migrate deploy; then
+    log "Migrations not applicable (e.g. DB was set up with db push). Syncing schema with db push..."
+    npx prisma db push --accept-data-loss=false || warning "Database schema sync had issues"
+  fi
 else
   log "Syncing database schema (no migrations folder)..."
   npx prisma db push --accept-data-loss=false || warning "Database schema sync had issues"
@@ -82,10 +85,16 @@ fi
 log "Building application..."
 npm run build || error "Build failed"
 
-# Restart application with PM2
+# Restart application with PM2 (use dev config when deploying AyaDev branch)
 if command -v pm2 &> /dev/null; then
     log "Restarting application with PM2..."
-    pm2 restart ecosystem.config.js || pm2 start ecosystem.config.js || error "Failed to restart PM2"
+    if [ "$DEPLOY_BRANCH" = "AyaDev" ] && [ -f "ecosystem.dev.config.js" ]; then
+        pm2 restart ecosystem.dev.config.js || pm2 start ecosystem.dev.config.js || error "Failed to restart PM2"
+        log "Check: pm2 status | pm2 logs aya-eye-dev"
+    else
+        pm2 restart ecosystem.config.js || pm2 start ecosystem.config.js || error "Failed to restart PM2"
+        log "Check: pm2 status | pm2 logs aya-eye"
+    fi
     pm2 save || warning "Failed to save PM2 configuration"
 else
     warning "PM2 not found. Please restart the application manually."
@@ -93,4 +102,3 @@ fi
 
 log "Deployment completed successfully!"
 log "Check application status with: pm2 status"
-log "View logs with: pm2 logs aya-eye"
